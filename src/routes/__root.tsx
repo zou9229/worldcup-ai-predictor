@@ -41,7 +41,6 @@ const getAnalyticsConfigs = createServerFn().handler(async () => {
 export const Route = createRootRoute({
   loader: () => getAnalyticsConfigs(),
   head: () => {
-    // VITE_APP_URL wasn't inlined into the client bundle at build — which would
     return {
       meta: [
         { charSet: 'utf-8' },

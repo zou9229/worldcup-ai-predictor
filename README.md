@@ -138,4 +138,4 @@ INLINE_IMAGE_MAX_KB=2048
 
 This is proprietary software. See [LICENSE](./LICENSE) for the full license agreement.
 
-**ShipAny** — [shipany.ai](https://shipany.ai)
+**AiOmniaHub**
