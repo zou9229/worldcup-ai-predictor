@@ -118,7 +118,7 @@ export const Route = createFileRoute('/watch/')({
         title,
         description,
         path: '/watch',
-        keywords: 'World Cup 2026 live stream, how to watch World Cup 2026, World Cup TV channel, World Cup watch guide',
+        keywords: 'World Cup 2026 viewing guide, how to watch World Cup 2026, World Cup TV channel, official World Cup broadcasters',
       }),
       links: buildSeoLinks('/watch', locale),
     };

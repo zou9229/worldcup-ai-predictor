@@ -233,6 +233,10 @@ export function getMatchSlug(match: Pick<WorldCupMatchSeed, 'teamA' | 'teamB'>) 
 }
 
 export function getWatchSlug(match: Pick<WorldCupMatchSeed, 'teamA' | 'teamB'>) {
+  return `how-to-watch-${slugify(match.teamA)}-vs-${slugify(match.teamB)}-official-viewing-guide`;
+}
+
+export function getLegacyWatchSlug(match: Pick<WorldCupMatchSeed, 'teamA' | 'teamB'>) {
   return `how-to-watch-${slugify(match.teamA)}-vs-${slugify(match.teamB)}-live-stream-free`;
 }
 
@@ -288,7 +292,9 @@ export function getMatchBySlug(slug: string) {
 }
 
 export function getMatchByWatchSlug(slug: string) {
-  return getWorldCupMatches().find((match) => match.watchSlug === slug);
+  return getWorldCupMatches().find(
+    (match) => match.watchSlug === slug || getLegacyWatchSlug(match) === slug
+  );
 }
 
 export function getFeaturedMatches(limit = 8) {
@@ -297,16 +303,27 @@ export function getFeaturedMatches(limit = 8) {
     .slice(0, limit);
 }
 
+export function getFinalScore(match: Pick<WorldCupMatchSeed, 'score'>) {
+  return match.score?.ft ? `${match.score.ft[0]}-${match.score.ft[1]}` : null;
+}
+
+export function getDisplayScore(match: WorldCupMatch) {
+  return getFinalScore(match) ?? match.prediction.predictedScore;
+}
+
 export function getMatchTitle(match: WorldCupMatch) {
-  return `${match.teamA} vs ${match.teamB} AI Prediction, Score Simulator & How to Watch Live Free`;
+  return `${match.teamA} vs ${match.teamB} AI Prediction, Score Simulator & Viewing Guide`;
 }
 
 export function getMatchDescription(match: WorldCupMatch) {
-  return `Get the AI-powered ${match.teamA} vs ${match.teamB} prediction for World Cup 2026, including win probability, predicted score, tactical notes, and legal live stream options.`;
+  if (match.score?.ft) {
+    return `Review ${match.teamA} vs ${match.teamB} for World Cup 2026, including the recorded full-time score, model probability view, tactical notes, and official viewing guidance.`;
+  }
+  return `Get the AI-powered ${match.teamA} vs ${match.teamB} prediction for World Cup 2026, including win probability, predicted score, tactical notes, and official viewing guidance.`;
 }
 
 export function getWatchTitle(match: WorldCupMatch) {
-  return `How to Watch ${match.teamA} vs ${match.teamB} Live Stream Free Online`;
+  return `How to Watch ${match.teamA} vs ${match.teamB}: Official Viewing Guide`;
 }
 
 export function getWatchDescription(match: WorldCupMatch) {

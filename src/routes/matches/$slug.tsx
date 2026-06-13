@@ -16,6 +16,8 @@ import { buildSeoLinks, buildSeoMeta } from '@/lib/seo';
 import {
   getMatchDescription,
   getMatchTitle,
+  getDisplayScore,
+  getFinalScore,
   getVenueLabel,
   getVpnAffiliateUrl,
   type WorldCupMatch,
@@ -25,6 +27,7 @@ import { getLocale } from '@/paraglide/runtime.js';
 
 function MatchPage() {
   const { match } = Route.useLoaderData();
+  const finalScore = getFinalScore(match);
 
   return (
     <div className="min-h-screen bg-[#edf4ed] text-slate-950">
@@ -49,7 +52,15 @@ function MatchPage() {
                     {match.prediction.keyBattle}
                   </p>
                   <p>
-                    {m['worldcup.match.predicted_score_prefix']()} <strong className="text-emerald-950">{match.prediction.predictedScore}</strong>. {m['worldcup.match.total_goals_prefix']()} <strong className="text-emerald-950">{match.prediction.totalGoalsLean}</strong>.
+                    {finalScore ? (
+                      <>
+                        {m['worldcup.match.final_score_prefix']()} <strong className="text-emerald-950">{finalScore}</strong>. {m['worldcup.match.model_estimate_note']()}
+                      </>
+                    ) : (
+                      <>
+                        {m['worldcup.match.predicted_score_prefix']()} <strong className="text-emerald-950">{match.prediction.predictedScore}</strong>. {m['worldcup.match.total_goals_prefix']()} <strong className="text-emerald-950">{match.prediction.totalGoalsLean}</strong>.
+                      </>
+                    )}
                   </p>
                 </CardContent>
               </Card>
@@ -109,6 +120,16 @@ function MatchPage() {
                   <p>{m['worldcup.match.disclaimer']()}</p>
                 </CardContent>
               </Card>
+
+              <Card className="rounded-lg border-emerald-950/10 bg-white/75 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="text-lg">{m['worldcup.data.source_title']()}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm leading-6 text-emerald-950/62">
+                  <p>{m['worldcup.data.source_note']()}</p>
+                  <p>{m['worldcup.data.prediction_note']()}</p>
+                </CardContent>
+              </Card>
             </aside>
           </div>
         </section>
@@ -119,11 +140,12 @@ function MatchPage() {
 }
 
 function MatchHero({ match }: { match: WorldCupMatch }) {
+  const finalScore = getFinalScore(match);
   const visualLabels = {
     liveModel: m['worldcup.visual.live_model'](),
     fixtures: m['worldcup.visual.fixtures'](),
     prediction: m['worldcup.visual.prediction'](),
-    score: match.prediction.predictedScore,
+    score: getDisplayScore(match),
     kickoff: m['worldcup.visual.kickoff'](),
     winProbability: m['worldcup.visual.win_probability'](),
     home: match.teamA,
@@ -140,7 +162,7 @@ function MatchHero({ match }: { match: WorldCupMatch }) {
         <div className="mb-6 flex flex-wrap items-center gap-2">
           <Badge className="border-lime-200/20 bg-lime-200/12 text-lime-100" variant="outline">{match.group || match.round}</Badge>
           <Badge className="border-white/25 bg-white/10 text-white" variant="outline">{m['worldcup.match.confidence']({ confidence: match.prediction.confidence })}</Badge>
-          <Badge className="border-white/25 bg-white/10 text-white" variant="outline">Daily sync</Badge>
+          <Badge className="border-white/25 bg-white/10 text-white" variant="outline">{m['worldcup.data.sync_badge']()}</Badge>
         </div>
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
           <div>
@@ -182,8 +204,10 @@ function MatchHero({ match }: { match: WorldCupMatch }) {
               <div className="flex items-center gap-3">
                 <Trophy className="size-5 text-amber-200" />
                 <div>
-                  <p className="text-sm font-medium">{m['worldcup.match.predicted_score']()}</p>
-                  <p className="text-sm text-white/62">{match.prediction.predictedScore}</p>
+                  <p className="text-sm font-medium">
+                    {finalScore ? m['worldcup.match.final_score']() : m['worldcup.match.predicted_score']()}
+                  </p>
+                  <p className="text-sm text-white/62">{getDisplayScore(match)}</p>
                 </div>
               </div>
             </CardContent>
@@ -242,7 +266,7 @@ export const Route = createFileRoute('/matches/$slug')({
         title,
         description,
         path: `/matches/${match.slug}`,
-        keywords: `${match.teamA} vs ${match.teamB} AI prediction, ${match.teamA} vs ${match.teamB} score simulator, how to watch ${match.teamA} vs ${match.teamB} live free`,
+        keywords: `${match.teamA} vs ${match.teamB} AI prediction, ${match.teamA} vs ${match.teamB} score simulator, ${match.teamA} vs ${match.teamB} official viewing guide`,
       }),
       links: buildSeoLinks(`/matches/${match.slug}`, locale),
     };

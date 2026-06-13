@@ -4,10 +4,12 @@ import { ArrowRight, CalendarDays, MapPin, Trophy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TeamFlagMark } from '@/components/worldcup/team-flag';
-import { type WorldCupMatch } from '@/lib/worldcup';
+import { getDisplayScore, type WorldCupMatch } from '@/lib/worldcup';
 import { cn } from '@/lib/utils';
 
 export function MatchCard({ match }: { match: WorldCupMatch }) {
+  const displayScore = getDisplayScore(match);
+
   return (
     <Card className="group overflow-hidden rounded-lg border-emerald-950/20 bg-[#07130f] text-white shadow-sm transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-emerald-950/20">
       <CardHeader className="border-b border-white/10 pb-3">
@@ -59,7 +61,7 @@ export function MatchCard({ match }: { match: WorldCupMatch }) {
         <div className="flex items-center justify-between gap-3 rounded-md bg-lime-200/10 px-3 py-2 text-sm">
           <span className="inline-flex items-center gap-2 text-lime-100">
             <Trophy className="size-4" />
-            {match.prediction.predictedScore}
+            {match.score?.ft ? `FT ${displayScore}` : displayScore}
           </span>
           <span className="text-xs text-white/52">{match.prediction.confidence}</span>
         </div>

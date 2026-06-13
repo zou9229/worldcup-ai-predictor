@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { getWorldCupWatchMatchFn } from '@/lib/worldcup-server';
 import { buildSeoLinks, buildSeoMeta } from '@/lib/seo';
 import {
+  getDisplayScore,
   getVpnAffiliateUrl,
   getWatchDescription,
   getWatchTitle,
@@ -25,7 +26,7 @@ function WatchPage() {
     liveModel: m['worldcup.visual.live_model'](),
     fixtures: m['worldcup.visual.fixtures'](),
     prediction: m['worldcup.visual.prediction'](),
-    score: match.prediction.predictedScore,
+    score: getDisplayScore(match),
     kickoff: m['worldcup.visual.kickoff'](),
     winProbability: m['worldcup.visual.win_probability'](),
     home: match.teamA,
@@ -156,7 +157,7 @@ export const Route = createFileRoute('/watch/$slug')({
         title,
         description,
         path: `/watch/${match.watchSlug}`,
-        keywords: `how to watch ${match.teamA} vs ${match.teamB} live free, ${match.teamA} vs ${match.teamB} live stream, ${match.teamA} vs ${match.teamB} TV channel`,
+        keywords: `how to watch ${match.teamA} vs ${match.teamB}, ${match.teamA} vs ${match.teamB} TV channel, ${match.teamA} vs ${match.teamB} official viewing guide`,
       }),
       links: buildSeoLinks(`/watch/${match.watchSlug}`, locale),
     };
