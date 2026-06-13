@@ -90,8 +90,10 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: ReactNode }) {
+  const locale = getLocale();
+
   return (
-    <html lang={getLocale()} suppressHydrationWarning>
+    <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>

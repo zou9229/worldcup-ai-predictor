@@ -16,7 +16,7 @@ export function TeamFlagMark({
   return (
     <span
       className={cn(
-        'inline-flex min-w-0 items-center gap-2 rounded-md border border-white/15 bg-white/10 px-2.5 py-1.5 shadow-sm backdrop-blur',
+        'inline-flex max-w-full min-w-0 items-center gap-2 overflow-hidden rounded-md border border-white/15 bg-white/10 px-2.5 py-1.5 shadow-sm backdrop-blur',
         className
       )}
     >
@@ -47,7 +47,7 @@ export function TeamFlagMark({
           WC
         </span>
       )}
-      <span className="font-mono text-[0.66rem] font-semibold uppercase tracking-wide text-current/72">
+      <span className="truncate font-mono text-[0.66rem] font-semibold uppercase tracking-wide text-current/72">
         {code}
       </span>
     </span>

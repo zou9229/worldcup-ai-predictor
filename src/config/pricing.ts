@@ -1,14 +1,13 @@
 /**
  * Authoritative pricing catalog.
  *
- * The checkout API uses this as the SOURCE OF TRUTH for price/credits/duration.
- * Any price, credits, or plan info sent by the client is IGNORED — only the
- * product_id is honored, and everything else is looked up here.
+ * The checkout API uses this as the source of truth for price, credits, and duration.
+ * Client-sent price or plan fields are ignored; only product_id is honored.
  *
  * To change pricing, edit this file and redeploy. Admin UI cannot alter prices.
  */
 
-import { PaymentInterval, PaymentType } from '@/core/payment/types';
+import { PaymentType, type PaymentInterval } from '@/core/payment/types';
 
 export type PricingPlanInfo = {
   name: string;
@@ -29,106 +28,39 @@ export type PricingProduct = {
   plan?: PricingPlanInfo;
 };
 
-/**
- * Default demo catalog. Replace with your real products when launching.
- * Keys MUST match what the pricing UI sends as product_id.
- */
 export const pricingCatalog: Record<string, PricingProduct> = {
-  starter_monthly: {
-    productId: 'starter_monthly',
-    productName: 'Starter',
-    planName: 'Starter',
-    description: 'Starter Monthly',
-    type: PaymentType.SUBSCRIPTION,
-    priceInCents: 900,
-    currency: 'usd',
-    credits: 5000,
-    plan: { name: 'Starter', interval: PaymentInterval.MONTH, intervalCount: 1 },
-  },
-  pro_monthly: {
-    productId: 'pro_monthly',
-    productName: 'Pro',
-    planName: 'Pro',
-    description: 'Pro Monthly',
-    type: PaymentType.SUBSCRIPTION,
-    priceInCents: 2900,
-    currency: 'usd',
-    credits: 50000,
-    plan: { name: 'Pro', interval: PaymentInterval.MONTH, intervalCount: 1 },
-  },
-  enterprise_monthly: {
-    productId: 'enterprise_monthly',
-    productName: 'Enterprise',
-    planName: 'Enterprise',
-    description: 'Enterprise Monthly',
-    type: PaymentType.SUBSCRIPTION,
-    priceInCents: 9900,
-    currency: 'usd',
-    credits: 500000,
-    plan: { name: 'Enterprise', interval: PaymentInterval.MONTH, intervalCount: 1 },
-  },
-  starter_yearly: {
-    productId: 'starter_yearly',
-    productName: 'Starter',
-    planName: 'Starter',
-    description: 'Starter Yearly',
-    type: PaymentType.SUBSCRIPTION,
-    priceInCents: 8600,
-    currency: 'usd',
-    credits: 60000,
-    plan: { name: 'Starter', interval: PaymentInterval.YEAR, intervalCount: 1 },
-  },
-  pro_yearly: {
-    productId: 'pro_yearly',
-    productName: 'Pro',
-    planName: 'Pro',
-    description: 'Pro Yearly',
-    type: PaymentType.SUBSCRIPTION,
-    priceInCents: 27800,
-    currency: 'usd',
-    credits: 600000,
-    plan: { name: 'Pro', interval: PaymentInterval.YEAR, intervalCount: 1 },
-  },
-  enterprise_yearly: {
-    productId: 'enterprise_yearly',
-    productName: 'Enterprise',
-    planName: 'Enterprise',
-    description: 'Enterprise Yearly',
-    type: PaymentType.SUBSCRIPTION,
-    priceInCents: 95000,
-    currency: 'usd',
-    credits: 6000000,
-    plan: { name: 'Enterprise', interval: PaymentInterval.YEAR, intervalCount: 1 },
-  },
-  starter_lifetime: {
-    productId: 'starter_lifetime',
-    productName: 'Starter',
-    planName: 'Starter Lifetime',
-    description: 'Starter Lifetime',
+  worldcup_credits_20: {
+    productId: 'worldcup_credits_20',
+    productName: 'World Cup AI Credit Pack',
+    planName: 'Credit Pack',
+    description: '20 premium World Cup AI simulations',
     type: PaymentType.ONE_TIME,
-    priceInCents: 14900,
+    priceInCents: 199,
     currency: 'usd',
-    credits: 100000,
+    credits: 20,
+    creditsValidDays: 45,
   },
-  pro_lifetime: {
-    productId: 'pro_lifetime',
-    productName: 'Pro',
-    planName: 'Pro Lifetime',
-    description: 'Pro Lifetime',
+  worldcup_tournament_pass: {
+    productId: 'worldcup_tournament_pass',
+    productName: 'World Cup AI Tournament Pass',
+    planName: 'Tournament Pass',
+    description: '100 premium World Cup AI simulations for tournament use',
     type: PaymentType.ONE_TIME,
-    priceInCents: 49900,
+    priceInCents: 499,
     currency: 'usd',
-    credits: 1000000,
+    credits: 100,
+    creditsValidDays: 45,
   },
-  enterprise_lifetime: {
-    productId: 'enterprise_lifetime',
-    productName: 'Enterprise',
-    planName: 'Enterprise Lifetime',
-    description: 'Enterprise Lifetime',
+  worldcup_sponsor_slot: {
+    productId: 'worldcup_sponsor_slot',
+    productName: 'World Cup Sponsor Inquiry',
+    planName: 'Sponsor Inquiry',
+    description:
+      'Sponsored placement review, inventory availability check, UTM setup guidance, and affiliate copy review',
     type: PaymentType.ONE_TIME,
-    priceInCents: 199900,
+    priceInCents: 4900,
     currency: 'usd',
-    credits: 10000000,
+    credits: 0,
   },
 };
 

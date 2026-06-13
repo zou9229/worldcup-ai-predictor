@@ -68,11 +68,16 @@ export default defineConfig({
         {
           pattern: '/api/:path(.*)?',
           localized: [
-            ['en', '/api/:path(.*)?'],
             ['zh', '/api/:path(.*)?'],
             ['es', '/api/:path(.*)?'],
             ['pt-BR', '/api/:path(.*)?'],
             ['fr', '/api/:path(.*)?'],
+            ['de', '/api/:path(.*)?'],
+            ['it', '/api/:path(.*)?'],
+            ['ja', '/api/:path(.*)?'],
+            ['ko', '/api/:path(.*)?'],
+            ['ar', '/api/:path(.*)?'],
+            ['en', '/api/:path(.*)?'],
           ],
         },
         // Bare locale homes match without a trailing-slash redirect.
@@ -84,17 +89,27 @@ export default defineConfig({
             ['es', '/es'],
             ['pt-BR', '/pt-br'],
             ['fr', '/fr'],
+            ['de', '/de'],
+            ['it', '/it'],
+            ['ja', '/ja'],
+            ['ko', '/ko'],
+            ['ar', '/ar'],
           ],
         },
-        // "as-needed" prefix: zh under /zh, en (default) unprefixed.
+        // Locale-prefixed paths must be checked before the base-locale catch-all.
         {
           pattern: '/:path(.*)?',
           localized: [
-            ['en', '/:path(.*)?'],
             ['zh', '/zh/:path(.*)?'],
             ['es', '/es/:path(.*)?'],
             ['pt-BR', '/pt-br/:path(.*)?'],
             ['fr', '/fr/:path(.*)?'],
+            ['de', '/de/:path(.*)?'],
+            ['it', '/it/:path(.*)?'],
+            ['ja', '/ja/:path(.*)?'],
+            ['ko', '/ko/:path(.*)?'],
+            ['ar', '/ar/:path(.*)?'],
+            ['en', '/:path(.*)?'],
           ],
         },
       ],

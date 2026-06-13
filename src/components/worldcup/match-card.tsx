@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TeamFlagMark } from '@/components/worldcup/team-flag';
 import { type WorldCupMatch } from '@/lib/worldcup';
+import { cn } from '@/lib/utils';
 
 export function MatchCard({ match }: { match: WorldCupMatch }) {
   return (
@@ -21,9 +22,9 @@ export function MatchCard({ match }: { match: WorldCupMatch }) {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 pt-1">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-2 pt-1 sm:gap-3">
           <TeamSide team={match.teamA} align="left" />
-          <div className="flex size-12 items-center justify-center rounded-full border border-lime-200/25 bg-lime-200/10 font-serif text-lg italic text-lime-100">
+          <div className="mt-6 flex size-10 shrink-0 items-center justify-center rounded-full border border-lime-200/25 bg-lime-200/10 font-serif text-base italic text-lime-100 sm:size-12 sm:text-lg">
             vs
           </div>
           <TeamSide team={match.teamB} align="right" />
@@ -83,12 +84,20 @@ function TeamSide({
   align: 'left' | 'right';
 }) {
   return (
-    <div className={align === 'right' ? 'text-right' : ''}>
+    <div
+      className={cn(
+        'flex min-w-0 flex-col',
+        align === 'right' ? 'items-end text-right' : 'items-start text-left'
+      )}
+    >
       <TeamFlagMark
         team={team}
+        compact
         className={align === 'right' ? 'ml-auto' : ''}
       />
-      <div className="mt-3 truncate text-xl font-bold tracking-tight">{team}</div>
+      <div className="mt-3 max-w-full break-words text-lg font-bold leading-tight tracking-tight sm:text-xl">
+        {team}
+      </div>
     </div>
   );
 }

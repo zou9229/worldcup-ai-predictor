@@ -119,7 +119,17 @@ export function SupportWidget() {
           'transition-all hover:scale-105 hover:bg-lime-200'
         )}
       >
-        {open ? <X className="size-5" /> : <Bot className="size-6" />}
+        {!open ? (
+          <>
+            <span className="absolute inset-0 animate-ping rounded-full bg-lime-300/40" />
+            <span className="absolute -left-12 top-1/2 hidden -translate-y-1/2 rounded-full border border-emerald-950/10 bg-white/92 px-2.5 py-1 text-[0.68rem] font-semibold text-emerald-950 shadow-sm sm:block">
+              AI
+            </span>
+          </>
+        ) : null}
+        <span className="relative">
+          {open ? <X className="size-5" /> : <Bot className="size-6" />}
+        </span>
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>

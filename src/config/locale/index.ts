@@ -7,4 +7,9 @@ export const localeNames: Record<string, string> = {
   es: 'Español',
   'pt-BR': 'Português',
   fr: 'Français',
+  de: 'Deutsch',
+  it: 'Italiano',
+  ja: '日本語',
+  ko: '한국어',
+  ar: 'العربية',
 };
