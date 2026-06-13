@@ -212,6 +212,10 @@ export function SupportWidget() {
                     ) : null}
                   </div>
 
+                  <p className="text-xs leading-5 text-muted-foreground">
+                    {m['worldcup.assistant.credit_note']()}
+                  </p>
+
                   <div className="flex gap-2">
                     <Textarea
                       value={chatInput}

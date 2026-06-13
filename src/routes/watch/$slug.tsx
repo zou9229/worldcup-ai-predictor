@@ -17,6 +17,7 @@ import {
   getWatchDescription,
   getWatchTitle,
 } from '@/lib/worldcup';
+import { WORLD_CUP_BROADCASTER_GUIDES } from '@/lib/worldcup-broadcasters';
 import { m } from '@/paraglide/messages.js';
 import { getLocale } from '@/paraglide/runtime.js';
 
@@ -85,6 +86,40 @@ function WatchPage() {
                 <CardContent className="space-y-4 text-sm leading-7 text-emerald-950/62">
                   <p>{m['worldcup.watch.official_body']()}</p>
                   <p>{m['worldcup.watch.travel_body']()}</p>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-lg border-emerald-950/10 bg-white/75 shadow-sm">
+                <CardHeader>
+                  <CardTitle>{m['worldcup.watch.broadcasters_title']()}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm leading-7 text-emerald-950/62">
+                    {m['worldcup.watch.broadcasters_description']()}
+                  </p>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {WORLD_CUP_BROADCASTER_GUIDES.slice(0, 5).map((region) => (
+                      <div key={region.region} className="rounded-md border border-emerald-950/10 bg-emerald-950/[0.03] p-3">
+                        <p className="text-sm font-semibold text-emerald-950">{region.region}</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {region.links.map((link) => (
+                            <a
+                              key={link.url}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="rounded-full border border-emerald-950/10 bg-white px-2.5 py-1 text-xs font-medium text-emerald-950/70 hover:border-primary/50 hover:text-primary"
+                            >
+                              {link.name}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs leading-5 text-emerald-950/52">
+                    {m['worldcup.watch.broadcasters_source_note']()}
+                  </p>
                 </CardContent>
               </Card>
 

@@ -45,7 +45,7 @@ async function POST({ request }: { request: Request }) {
       provider: 'vertex-gemini',
       model,
       prompt: body.message,
-      costCredits: 0,
+      costCredits: 1,
       options: {
         surface: 'worldcup-floating-assistant',
       },

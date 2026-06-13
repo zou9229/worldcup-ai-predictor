@@ -6,7 +6,7 @@
  */
 
 import { sql } from 'drizzle-orm';
-import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 const table = sqliteTable;
 
@@ -693,7 +693,41 @@ export const userInvite = table(
   ]
 );
 
+export const worldcupFanPick = table(
+  'worldcup_fan_pick',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    userEmail: text('user_email').notNull().default(''),
+    matchSlug: text('match_slug').notNull(),
+    pick: text('pick').notNull(),
+    predictedScore: text('predicted_score').notNull().default(''),
+    status: text('status').notNull().default('pending'),
+    rewardCredits: integer('reward_credits').notNull().default(0),
+    rewardReason: text('reward_reason').notNull().default(''),
+    cardTitle: text('card_title').notNull().default(''),
+    cardTheme: text('card_theme').notNull().default(''),
+    settledAt: integer('settled_at', { mode: 'timestamp_ms' }),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    deletedAt: integer('deleted_at', { mode: 'timestamp_ms' }),
+  },
+  (t) => [
+    index('idx_worldcup_fan_pick_user').on(t.userId),
+    index('idx_worldcup_fan_pick_match').on(t.matchSlug),
+    uniqueIndex('uidx_worldcup_fan_pick_user_match').on(t.userId, t.matchSlug),
+  ]
+);
+
 export type InviteCode = typeof inviteCode.$inferSelect;
 export type NewInviteCode = typeof inviteCode.$inferInsert;
 export type UserInvite = typeof userInvite.$inferSelect;
 export type NewUserInvite = typeof userInvite.$inferInsert;
+export type WorldcupFanPick = typeof worldcupFanPick.$inferSelect;
+export type NewWorldcupFanPick = typeof worldcupFanPick.$inferInsert;

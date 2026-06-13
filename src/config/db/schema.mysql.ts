@@ -14,6 +14,7 @@ import {
   mysqlTable,
   text,
   timestamp,
+  uniqueIndex,
   varchar,
 } from 'drizzle-orm/mysql-core';
 
@@ -567,3 +568,34 @@ export type NewTicketMessage = typeof ticketMessage.$inferInsert;
 
 // ─── Custom tables ───────────────────────────────────────────────────────────
 // Add your own tables below this line.
+
+export const worldcupFanPick = table(
+  'worldcup_fan_pick',
+  {
+    id: varchar191('id').primaryKey(),
+    userId: varchar191('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    userEmail: varchar('user_email', { length: 255 }).notNull().default(''),
+    matchSlug: varchar('match_slug', { length: 255 }).notNull(),
+    pick: varchar('pick', { length: 20 }).notNull(),
+    predictedScore: varchar('predicted_score', { length: 20 }).notNull().default(''),
+    status: varchar('status', { length: 30 }).notNull().default('pending'),
+    rewardCredits: int('reward_credits').notNull().default(0),
+    rewardReason: varchar('reward_reason', { length: 255 }).notNull().default(''),
+    cardTitle: varchar('card_title', { length: 255 }).notNull().default(''),
+    cardTheme: varchar('card_theme', { length: 100 }).notNull().default(''),
+    settledAt: timestamp('settled_at'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+    deletedAt: timestamp('deleted_at'),
+  },
+  (t) => [
+    index('idx_worldcup_fan_pick_user').on(t.userId),
+    index('idx_worldcup_fan_pick_match').on(t.matchSlug),
+    uniqueIndex('uidx_worldcup_fan_pick_user_match').on(t.userId, t.matchSlug),
+  ]
+);
+
+export type WorldcupFanPick = typeof worldcupFanPick.$inferSelect;
+export type NewWorldcupFanPick = typeof worldcupFanPick.$inferInsert;

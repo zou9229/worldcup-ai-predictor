@@ -13,6 +13,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
 const table = pgTable;
@@ -637,7 +638,40 @@ export const userInvite = table(
   ]
 );
 
+export const worldcupFanPick = table(
+  'worldcup_fan_pick',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    userEmail: text('user_email').notNull().default(''),
+    matchSlug: text('match_slug').notNull(),
+    pick: text('pick').notNull(),
+    predictedScore: text('predicted_score').notNull().default(''),
+    status: text('status').notNull().default('pending'),
+    rewardCredits: integer('reward_credits').notNull().default(0),
+    rewardReason: text('reward_reason').notNull().default(''),
+    cardTitle: text('card_title').notNull().default(''),
+    cardTheme: text('card_theme').notNull().default(''),
+    settledAt: timestamp('settled_at'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+    deletedAt: timestamp('deleted_at'),
+  },
+  (t) => [
+    index('idx_worldcup_fan_pick_user').on(t.userId),
+    index('idx_worldcup_fan_pick_match').on(t.matchSlug),
+    uniqueIndex('uidx_worldcup_fan_pick_user_match').on(t.userId, t.matchSlug),
+  ]
+);
+
 export type InviteCode = typeof inviteCode.$inferSelect;
 export type NewInviteCode = typeof inviteCode.$inferInsert;
 export type UserInvite = typeof userInvite.$inferSelect;
 export type NewUserInvite = typeof userInvite.$inferInsert;
+export type WorldcupFanPick = typeof worldcupFanPick.$inferSelect;
+export type NewWorldcupFanPick = typeof worldcupFanPick.$inferInsert;

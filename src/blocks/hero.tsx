@@ -31,8 +31,8 @@ export function Hero({ featuredMatch, syncStatus }: HeroProps = {}) {
     away: m["worldcup.visual.away"](),
   };
   const syncCopy = syncStatus?.lastSyncedAt
-    ? `${syncStatus.matchCount} fixtures synced`
-    : `${syncStatus?.matchCount ?? 104} fixtures loaded`;
+    ? m["worldcup.hero.fixtures_synced"]({ count: syncStatus.matchCount })
+    : m["worldcup.hero.fixtures_loaded"]({ count: syncStatus?.matchCount ?? 104 });
 
   return (
     <section className="relative isolate min-h-[82svh] overflow-hidden px-4 pb-24 pt-18 text-white sm:pt-24">
@@ -81,9 +81,16 @@ export function Hero({ featuredMatch, syncStatus }: HeroProps = {}) {
           </div>
 
           <div className="grid max-w-2xl grid-cols-3 overflow-hidden rounded-lg border border-white/12 bg-black/20 text-sm backdrop-blur-md">
-            <HeroStat label="Today" value="2" />
-            <HeroStat label="AI" value="Vertex" />
-            <HeroStat label="Sync" value={syncStatus?.ok === false ? "Fallback" : "Daily"} />
+            <HeroStat label={m["worldcup.hero.stat_today"]()} value="2" />
+            <HeroStat label={m["worldcup.hero.stat_ai"]()} value="Vertex" />
+            <HeroStat
+              label={m["worldcup.hero.stat_sync"]()}
+              value={
+                syncStatus?.ok === false
+                  ? m["worldcup.hero.sync_fallback"]()
+                  : m["worldcup.hero.sync_daily"]()
+              }
+            />
           </div>
         </div>
 
@@ -112,10 +119,10 @@ function HeroMatchCard({ match }: { match: WorldCupMatch }) {
       <div className="mb-5 flex items-center justify-between gap-3">
         <span className="inline-flex items-center gap-2 rounded-full bg-lime-200/12 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-lime-100">
           <CalendarDays className="size-3.5" />
-          Today's fixtures
+          {m["worldcup.hero.today_fixtures"]()}
         </span>
         <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-white/60">
-          Locked
+          {m["worldcup.hero.locked"]()}
         </span>
       </div>
 
@@ -149,7 +156,7 @@ function HeroMatchCard({ match }: { match: WorldCupMatch }) {
             href={`/matches/${match.slug}`}
             className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-lime-300 px-5 text-sm font-bold text-zinc-950 hover:bg-lime-200"
           >
-            Match room
+            {m["worldcup.hero.match_room"]()}
             <ArrowRight className="size-4" />
           </Link>
         </div>
@@ -166,9 +173,11 @@ function HeroTeam({
   align?: 'left' | 'right';
 }) {
   return (
-    <div className={align === 'right' ? 'text-right' : ''}>
+    <div className={cn('min-w-0', align === 'right' ? 'text-right' : '')}>
       <TeamFlagMark team={team} className={align === 'right' ? 'ml-auto' : ''} />
-      <div className="mt-3 truncate text-2xl font-black tracking-tight sm:text-3xl">{team}</div>
+      <div className="mt-3 max-w-full break-words text-xl font-black leading-tight tracking-tight sm:text-2xl">
+        {team}
+      </div>
     </div>
   );
 }

@@ -12,6 +12,7 @@ import {
   getVenueLabel,
   type WorldCupMatch,
 } from '@/lib/worldcup';
+import { WORLD_CUP_BROADCASTER_GUIDES } from '@/lib/worldcup-broadcasters';
 import { buildSeoLinks, buildSeoMeta } from '@/lib/seo';
 import { getWorldCupMatchesFn } from '@/lib/worldcup-server';
 import { TeamFlagMark } from '@/components/worldcup/team-flag';
@@ -51,6 +52,8 @@ function WatchIndexPage() {
           </div>
         </section>
 
+        <BroadcasterGuideSection />
+
         <section className="px-4 py-12 sm:py-16">
           <div className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {matches.map((match) => (
@@ -61,6 +64,55 @@ function WatchIndexPage() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+function BroadcasterGuideSection() {
+  return (
+    <section className="border-b border-emerald-950/10 bg-white/60 px-4 py-12">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-800/70">
+              {m['worldcup.watch.broadcasters_badge']()}
+            </p>
+            <h2 className="mt-2 text-3xl font-black tracking-tight text-emerald-950">
+              {m['worldcup.watch.broadcasters_title']()}
+            </h2>
+          </div>
+          <p className="max-w-xl text-sm leading-6 text-emerald-950/62">
+            {m['worldcup.watch.broadcasters_description']()}
+          </p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {WORLD_CUP_BROADCASTER_GUIDES.map((region) => (
+            <Card key={region.region} className="rounded-lg border-emerald-950/10 bg-white/80 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-lg text-emerald-950">{region.region}</CardTitle>
+                <p className="text-sm leading-6 text-emerald-950/60">{region.note}</p>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {region.links.map((link) => (
+                  <a
+                    key={link.url}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block rounded-md border border-emerald-950/10 bg-emerald-950/[0.03] p-3 transition hover:border-primary/50 hover:bg-primary/10"
+                  >
+                    <span className="font-semibold text-emerald-950">{link.name}</span>
+                    <span className="mt-1 block text-xs leading-5 text-emerald-950/56">{link.note}</span>
+                  </a>
+                ))}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <p className="mt-5 text-xs leading-5 text-emerald-950/52">
+          {m['worldcup.watch.broadcasters_source_note']()}
+        </p>
+      </div>
+    </section>
   );
 }
 

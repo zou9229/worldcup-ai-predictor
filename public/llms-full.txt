@@ -1,0 +1,101 @@
+# WorldCupAI Predictor Full Context
+
+WorldCupAI Predictor is a World Cup 2026 AI match desk. It publishes programmatic match pages for every fixture, combines schedule metadata with model-estimated probabilities, and gives fans a safe path to official viewing options.
+
+## Site Purpose
+
+The site is designed for football fans searching for:
+
+- World Cup 2026 AI predictions
+- match-by-match win probabilities
+- predicted score and tactical notes
+- official broadcaster and viewing guidance
+- Vertex AI what-if simulations
+- fan picks and reward-style engagement
+
+The site is informational and entertainment-oriented. It is not a gambling, sportsbook, or betting-advice product.
+
+## Important URLs
+
+- Home: https://worldcup.aiomniahub.com/
+- Matches: https://worldcup.aiomniahub.com/matches
+- Watch guide: https://worldcup.aiomniahub.com/watch
+- Score simulator: https://worldcup.aiomniahub.com/score-simulator
+- Pricing: https://worldcup.aiomniahub.com/pricing
+- Sitemap: https://worldcup.aiomniahub.com/sitemap.xml
+
+## Data Sources
+
+The site currently uses a schedule snapshot synced from:
+
+- openfootball World Cup JSON: https://github.com/openfootball/worldcup.json
+- raw schedule endpoint: https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json
+
+The official reference for cross-checking fixtures is:
+
+- FIFA scores and fixtures: https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/scores-fixtures
+
+openfootball is useful for a free schedule dataset but should not be described as official, real-time, or guaranteed complete. For minute-by-minute live scores, lineups, substitutions, injuries, and official statistics, the site should use a licensed sports data provider.
+
+## Prediction Method
+
+The prediction layer is generated inside the app:
+
+- team-strength priors
+- fixture metadata
+- deterministic probability calculation
+- editorial tactical prompts
+- Vertex AI for custom what-if simulation responses
+
+These outputs are model estimates. They are not:
+
+- FIFA official predictions
+- sportsbook odds
+- financial advice
+- betting advice
+- guaranteed outcomes
+- live match telemetry
+
+## Viewing Guidance
+
+Watch pages should direct users to official broadcasters and licensed streaming services in their country or region. The site should not embed unauthorized World Cup streams or link to pirated sources.
+
+Recommended wording:
+
+- "official viewing guide"
+- "licensed streaming options"
+- "check your local rights holder"
+- "verify match-by-match coverage before kickoff"
+
+Avoid:
+
+- "free live stream"
+- "watch illegally"
+- "no subscription required"
+- any unauthorized iframe stream
+
+## Monetization
+
+Public prediction and watch pages are free. Premium credits are used for AI simulations and assistant questions. Suggested launch pricing:
+
+- 5 free welcome credits configured in the admin settings
+- 1 credit per World Cup AI assistant answer
+- 1 credit per score simulator run
+- $1.99 for 20 credits
+- $4.99 for 100 credits / tournament pass
+- sponsor inquiries for direct placements or affiliate partnerships
+
+Credits should not be exchangeable for cash or prizes. Reward mechanics should stay entertainment-only.
+
+## Safety And Compliance
+
+The site should disclose:
+
+- data source and last update status
+- model-estimate nature of predictions
+- no betting advice
+- no unauthorized streams
+- licensed or self-owned media only
+- no real-player likeness generation without rights
+- no FIFA logos, trophy replicas, official kits, or team crests unless licensed
+

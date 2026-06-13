@@ -4,6 +4,7 @@ import { Header } from '@/blocks/header';
 import { Footer } from '@/blocks/footer';
 import { FootballVisual } from '@/components/worldcup/football-visual';
 import { SimulationForm } from '@/components/worldcup/simulation-form';
+import { FanPickCard } from '@/components/worldcup/fan-pick-card';
 import { PredictionBars } from '@/components/worldcup/prediction-bars';
 import { TeamFlagMark } from '@/components/worldcup/team-flag';
 import { Badge } from '@/components/ui/badge';
@@ -64,6 +65,8 @@ function MatchPage() {
                   </p>
                 </CardContent>
               </Card>
+
+              <FanPickCard match={match} />
 
               <SimulationForm
                 matchSlug={match.slug}

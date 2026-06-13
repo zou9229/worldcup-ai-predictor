@@ -1,0 +1,29 @@
+# WorldCupAI Predictor
+
+> AI-powered World Cup 2026 match pages, score simulations, official viewing guidance, and fan prediction tools.
+
+WorldCupAI Predictor helps fans explore World Cup 2026 fixtures with model-estimated win probabilities, predicted scores, tactical notes, and Vertex AI what-if simulations. It is an informational football analysis and entertainment site, not betting advice.
+
+## Key Pages
+
+- [Home](https://worldcup.aiomniahub.com/)
+- [All match prediction pages](https://worldcup.aiomniahub.com/matches)
+- [Official viewing guide hub](https://worldcup.aiomniahub.com/watch)
+- [AI score simulator](https://worldcup.aiomniahub.com/score-simulator)
+- [Pricing](https://worldcup.aiomniahub.com/pricing)
+- [Sitemap](https://worldcup.aiomniahub.com/sitemap.xml)
+
+## Data And Model Notes
+
+- Fixtures and completed scores are synced from the openfootball World Cup 2026 JSON dataset when the site sync endpoint runs.
+- If external sync fails, the site falls back to a bundled local schedule snapshot.
+- Win probabilities, predicted scores, confidence labels, and tactical notes are generated locally from app team ratings and AI prompts.
+- Predictions are model/editorial estimates. They are not FIFA official data, sportsbook odds, betting advice, or live match telemetry.
+- Viewing pages point users toward official broadcasters and licensed streaming options. The site does not provide pirated streams.
+
+## Useful References
+
+- Source schedule dataset: https://github.com/openfootball/worldcup.json
+- Official FIFA fixtures reference: https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/scores-fixtures
+- Full LLM context: https://worldcup.aiomniahub.com/llms-full.txt
+
