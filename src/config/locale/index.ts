@@ -4,4 +4,7 @@
 export const localeNames: Record<string, string> = {
   en: 'English',
   zh: '中文',
+  es: 'Español',
+  'pt-BR': 'Português',
+  fr: 'Français',
 };

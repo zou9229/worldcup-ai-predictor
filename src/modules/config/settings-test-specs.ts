@@ -72,7 +72,7 @@ export const testSpecs: Record<string, TestSpec> = {
   r2: {
     group: 'r2',
     fields: [
-      { name: 'filename', label: 'Test filename', type: 'text', defaultValue: 'shipany-settings-test.txt' },
+      { name: 'filename', label: 'Test filename', type: 'text', defaultValue: 'worldcup-settings-test.txt' },
     ],
   },
   openai: {

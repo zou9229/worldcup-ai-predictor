@@ -9,13 +9,14 @@ import { buttonVariants } from '@/components/ui/button';
 import { Link } from '@/core/i18n/navigation';
 import { cn } from '@/lib/utils';
 import {
-  getCanonicalUrl,
   getVenueLabel,
   type WorldCupMatch,
 } from '@/lib/worldcup';
+import { buildSeoLinks, buildSeoMeta } from '@/lib/seo';
 import { getWorldCupMatchesFn } from '@/lib/worldcup-server';
 import { TeamFlagMark } from '@/components/worldcup/team-flag';
 import { m } from '@/paraglide/messages.js';
+import { getLocale } from '@/paraglide/runtime.js';
 
 function WatchIndexPage() {
   const { matches } = Route.useLoaderData();
@@ -108,21 +109,19 @@ export const Route = createFileRoute('/watch/')({
     const { matches } = await getWorldCupMatchesFn();
     return { matches: matches.slice(0, 24) };
   },
-  head: () => ({
-    meta: [
-      {
-        title: `${m['worldcup.watch.index_title']()} | WorldCupAI Predictor`,
-      },
-      {
-        name: 'description',
-        content: m['worldcup.watch.index_description'](),
-      },
-      {
-        name: 'keywords',
-        content: 'World Cup 2026 live stream, how to watch World Cup 2026, World Cup TV channel, World Cup watch guide',
-      },
-    ],
-    links: [{ rel: 'canonical', href: getCanonicalUrl('/watch') }],
-  }),
+  head: () => {
+    const locale = getLocale();
+    const title = `${m['worldcup.watch.index_title']({}, { locale })} | WorldCupAI Predictor`;
+    const description = m['worldcup.watch.index_description']({}, { locale });
+    return {
+      meta: buildSeoMeta({
+        title,
+        description,
+        path: '/watch',
+        keywords: 'World Cup 2026 live stream, how to watch World Cup 2026, World Cup TV channel, World Cup watch guide',
+      }),
+      links: buildSeoLinks('/watch', locale),
+    };
+  },
   component: WatchIndexPage,
 });

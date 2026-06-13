@@ -1,4 +1,4 @@
-# ShipAny Next
+# WorldCupAI Predictor
 
 A headless SaaS engine for building AI-powered products with Claude Code. Pre-wired business logic (payments, credits, subscriptions, auth, RBAC, i18n, CMS) with minimal UI — you build your product pages on top.
 

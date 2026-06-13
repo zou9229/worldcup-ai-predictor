@@ -10,13 +10,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { getWorldCupWatchMatchFn } from '@/lib/worldcup-server';
+import { buildSeoLinks, buildSeoMeta } from '@/lib/seo';
 import {
-  getCanonicalUrl,
   getVpnAffiliateUrl,
   getWatchDescription,
   getWatchTitle,
 } from '@/lib/worldcup';
 import { m } from '@/paraglide/messages.js';
+import { getLocale } from '@/paraglide/runtime.js';
 
 function WatchPage() {
   const { match } = Route.useLoaderData();
@@ -141,16 +142,23 @@ export const Route = createFileRoute('/watch/$slug')({
   head: ({ loaderData }) => {
     if (!loaderData?.match) return {};
     const match = loaderData.match;
+    const locale = getLocale();
+    const title =
+      locale === 'en'
+        ? `${getWatchTitle(match)} | WorldCupAI`
+        : `${m['worldcup.watch.title']({ teamA: match.teamA, teamB: match.teamB }, { locale })} | WorldCupAI`;
+    const description =
+      locale === 'en'
+        ? getWatchDescription(match)
+        : `${m['worldcup.watch.index_description']({}, { locale })} ${match.teamA} vs ${match.teamB}.`;
     return {
-      meta: [
-        { title: `${getWatchTitle(match)} | WorldCupAI` },
-        { name: 'description', content: getWatchDescription(match) },
-        {
-          name: 'keywords',
-          content: `how to watch ${match.teamA} vs ${match.teamB} live free, ${match.teamA} vs ${match.teamB} live stream, ${match.teamA} vs ${match.teamB} TV channel`,
-        },
-      ],
-      links: [{ rel: 'canonical', href: getCanonicalUrl(`/watch/${match.watchSlug}`) }],
+      meta: buildSeoMeta({
+        title,
+        description,
+        path: `/watch/${match.watchSlug}`,
+        keywords: `how to watch ${match.teamA} vs ${match.teamB} live free, ${match.teamA} vs ${match.teamB} live stream, ${match.teamA} vs ${match.teamB} TV channel`,
+      }),
+      links: buildSeoLinks(`/watch/${match.watchSlug}`, locale),
     };
   },
   component: WatchPage,

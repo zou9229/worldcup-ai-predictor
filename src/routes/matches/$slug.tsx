@@ -12,8 +12,8 @@ import { buttonVariants } from '@/components/ui/button';
 import { Link } from '@/core/i18n/navigation';
 import { cn } from '@/lib/utils';
 import { getWorldCupMatchFn } from '@/lib/worldcup-server';
+import { buildSeoLinks, buildSeoMeta } from '@/lib/seo';
 import {
-  getCanonicalUrl,
   getMatchDescription,
   getMatchTitle,
   getVenueLabel,
@@ -21,6 +21,7 @@ import {
   type WorldCupMatch,
 } from '@/lib/worldcup';
 import { m } from '@/paraglide/messages.js';
+import { getLocale } from '@/paraglide/runtime.js';
 
 function MatchPage() {
   const { match } = Route.useLoaderData();
@@ -227,16 +228,23 @@ export const Route = createFileRoute('/matches/$slug')({
   head: ({ loaderData }) => {
     if (!loaderData?.match) return {};
     const match = loaderData.match;
+    const locale = getLocale();
+    const title =
+      locale === 'en'
+        ? `${getMatchTitle(match)} | WorldCupAI`
+        : `${match.teamA} vs ${match.teamB} | ${m['worldcup.match.hero_suffix']({}, { locale })} | WorldCupAI`;
+    const description =
+      locale === 'en'
+        ? getMatchDescription(match)
+        : `${match.teamA} vs ${match.teamB}. ${m['worldcup.matches.description']({}, { locale })}`;
     return {
-      meta: [
-        { title: `${getMatchTitle(match)} | WorldCupAI` },
-        { name: 'description', content: getMatchDescription(match) },
-        {
-          name: 'keywords',
-          content: `${match.teamA} vs ${match.teamB} AI prediction, ${match.teamA} vs ${match.teamB} score simulator, how to watch ${match.teamA} vs ${match.teamB} live free`,
-        },
-      ],
-      links: [{ rel: 'canonical', href: getCanonicalUrl(`/matches/${match.slug}`) }],
+      meta: buildSeoMeta({
+        title,
+        description,
+        path: `/matches/${match.slug}`,
+        keywords: `${match.teamA} vs ${match.teamB} AI prediction, ${match.teamA} vs ${match.teamB} score simulator, how to watch ${match.teamA} vs ${match.teamB} live free`,
+      }),
+      links: buildSeoLinks(`/matches/${match.slug}`, locale),
     };
   },
   component: MatchPage,

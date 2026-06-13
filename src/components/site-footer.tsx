@@ -3,7 +3,7 @@ import type { ComponentType, SVGProps } from "react";
 import { envConfigs } from "@/config";
 import { cn } from "@/lib/utils";
 import { LocaleSelector } from "@/components/locale-selector";
-import { BuiltWithShipAny } from "@/components/built-with-shipany";
+import { BuiltWithAiOmniaHub } from "@/components/built-with-aiomniahub";
 
 export interface FooterColumn {
   title: string;
@@ -115,7 +115,7 @@ export function SiteFooter({
 
         {/* Bottom bar */}
         <div className="mt-6 flex flex-col gap-3 border-t border-neutral-800 pt-5 sm:flex-row sm:items-center sm:justify-between">
-          <BuiltWithShipAny />
+          <BuiltWithAiOmniaHub />
           <span className="text-sm text-neutral-400">
             {copyright || `© ${year} ${envConfigs.app_name}. All rights reserved.`}
           </span>

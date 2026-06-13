@@ -9,9 +9,10 @@ import { FAQ } from "@/blocks/faq";
 import { CTA } from "@/blocks/cta";
 import { Footer } from "@/blocks/footer";
 import { envConfigs } from "@/config";
+import { buildSeoLinks, buildSeoMeta, localizedUrl } from "@/lib/seo";
 import { getWorldCupHomeFn } from "@/lib/worldcup-server";
 import { m } from "@/paraglide/messages.js";
-import { getLocale, locales, localizeUrl } from "@/paraglide/runtime.js";
+import { getLocale } from "@/paraglide/runtime.js";
 
 /**
  * Default landing page — demo content. Rewrite this file (and the blocks in
@@ -45,24 +46,16 @@ export const Route = createFileRoute('/')({
   },
   head: ({ loaderData }) => {
     const locale = loaderData?.locale ?? 'en';
-    const urlFor = (loc: string) =>
-      localizeUrl(`${envConfigs.app_url}/`, { locale: loc as any }).href;
+    const title = envConfigs.app_name;
+    const description = m['landing.hero.subheadline']({}, { locale: locale as any });
     return {
-      meta: [
-        {
-          name: 'description',
-          content: m['landing.hero.subheadline']({}, { locale: locale as any }),
-        },
-      ],
-      links: [
-        { rel: 'canonical', href: urlFor(locale) },
-        ...locales.map((loc) => ({
-          rel: 'alternate',
-          hrefLang: loc,
-          href: urlFor(loc),
-        })),
-        { rel: 'alternate', hrefLang: 'x-default', href: urlFor('en') },
-      ],
+      meta: buildSeoMeta({
+        title,
+        description,
+        path: localizedUrl('/', locale),
+        keywords: 'World Cup 2026 AI prediction, World Cup score predictor, World Cup match predictions, AI football prediction',
+      }),
+      links: buildSeoLinks('/', locale),
     };
   },
   component: HomePage,

@@ -9,9 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { buttonVariants } from '@/components/ui/button';
 import { Link } from '@/core/i18n/navigation';
 import { cn } from '@/lib/utils';
-import { getCanonicalUrl } from '@/lib/worldcup';
+import { buildSeoLinks, buildSeoMeta } from '@/lib/seo';
 import { getWorldCupFeaturedMatchesFn } from '@/lib/worldcup-server';
 import { m } from '@/paraglide/messages.js';
+import { getLocale } from '@/paraglide/runtime.js';
 
 function ScoreSimulatorPage() {
   const { matches } = Route.useLoaderData();
@@ -135,16 +136,19 @@ export const Route = createFileRoute('/score-simulator')({
   loader: async () => {
     return getWorldCupFeaturedMatchesFn({ data: { limit: 9 } });
   },
-  head: () => ({
-    meta: [
-      { title: `${m['worldcup.score.title']()} | WorldCupAI Predictor` },
-      { name: 'description', content: m['worldcup.score.description']() },
-      {
-        name: 'keywords',
-        content: 'World Cup score simulator, World Cup 2026 score prediction, AI score predictor, football match simulator',
-      },
-    ],
-    links: [{ rel: 'canonical', href: getCanonicalUrl('/score-simulator') }],
-  }),
+  head: () => {
+    const locale = getLocale();
+    const title = `${m['worldcup.score.title']({}, { locale })} | WorldCupAI Predictor`;
+    const description = m['worldcup.score.description']({}, { locale });
+    return {
+      meta: buildSeoMeta({
+        title,
+        description,
+        path: '/score-simulator',
+        keywords: 'World Cup score simulator, World Cup 2026 score prediction, AI score predictor, football match simulator',
+      }),
+      links: buildSeoLinks('/score-simulator', locale),
+    };
+  },
   component: ScoreSimulatorPage,
 });

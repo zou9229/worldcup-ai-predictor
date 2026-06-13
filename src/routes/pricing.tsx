@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Footer } from '@/blocks/footer';
 import { Header } from '@/blocks/header';
 import { Pricing } from '@/blocks/pricing';
+import { buildSeoLinks, buildSeoMeta } from '@/lib/seo';
 import { m } from '@/paraglide/messages.js';
 import { getLocale } from '@/paraglide/runtime.js';
 
@@ -16,11 +17,14 @@ export const Route = createFileRoute('/pricing')({
   },
   head: ({ loaderData }) => ({
     meta: loaderData
-      ? [
-          { title: loaderData.title },
-          { name: 'description', content: loaderData.description },
-        ]
+      ? buildSeoMeta({
+          title: loaderData.title,
+          description: loaderData.description,
+          path: '/pricing',
+          keywords: 'World Cup AI prediction pricing, AI score simulator credits, World Cup prediction pass',
+        })
       : [],
+    links: buildSeoLinks('/pricing', getLocale()),
   }),
   component: PricingPage,
 });

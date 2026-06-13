@@ -286,10 +286,10 @@ async function testR2(inputs: Record<string, string>, configs: Record<string, st
     publicDomain: configs.r2_domain || undefined,
   });
 
-  const safeName = (inputs.filename || 'shipany-settings-test.txt').replace(/[^a-zA-Z0-9._-]/g, '_');
+  const safeName = (inputs.filename || 'worldcup-settings-test.txt').replace(/[^a-zA-Z0-9._-]/g, '_');
   const key = `settings-test/${Date.now()}-${safeName}`;
   const body = Buffer.from(
-    `ShipAny settings test\nTimestamp: ${new Date().toISOString()}\n`,
+    `WorldCupAI settings test\nTimestamp: ${new Date().toISOString()}\n`,
     'utf-8',
   );
 

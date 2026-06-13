@@ -9,9 +9,9 @@ function getHostname(url: string): string {
   }
 }
 
-export function BuiltWithShipAny({ className }: { className?: string }) {
+export function BuiltWithAiOmniaHub({ className }: { className?: string }) {
   const utm = encodeURIComponent(getHostname(envConfigs.app_url));
-  const href = `https://shipany.ai/?utm_source=${utm}`;
+  const href = `https://aiomniahub.com/?utm_source=${utm}`;
 
   return (
     <a
@@ -23,9 +23,8 @@ export function BuiltWithShipAny({ className }: { className?: string }) {
         className
       )}
     >
-      <span>Built with</span>
-      <span aria-hidden className="text-red-500">❤️</span>
-      <span>ShipAny</span>
+      <span>Built by</span>
+      <span>AiOmniaHub</span>
     </a>
   );
 }

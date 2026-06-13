@@ -4,9 +4,10 @@ import { Footer } from '@/blocks/footer';
 import { MatchCard } from '@/components/worldcup/match-card';
 import { Badge } from '@/components/ui/badge';
 import { envConfigs } from '@/config';
-import { getCanonicalUrl } from '@/lib/worldcup';
+import { buildSeoLinks, buildSeoMeta } from '@/lib/seo';
 import { getWorldCupMatchesFn } from '@/lib/worldcup-server';
 import { m } from '@/paraglide/messages.js';
+import { getLocale } from '@/paraglide/runtime.js';
 
 function MatchesIndexPage() {
   const { matches, syncStatus } = Route.useLoaderData();
@@ -73,15 +74,19 @@ export const Route = createFileRoute('/matches/')({
   loader: async () => {
     return getWorldCupMatchesFn();
   },
-  head: () => ({
-    meta: [
-      { title: `${m['worldcup.matches.title']()} | ${envConfigs.app_name}` },
-      {
-        name: 'description',
-        content: m['worldcup.matches.description'](),
-      },
-    ],
-    links: [{ rel: 'canonical', href: getCanonicalUrl('/matches') }],
-  }),
+  head: () => {
+    const locale = getLocale();
+    const title = `${m['worldcup.matches.title']({}, { locale })} | ${envConfigs.app_name}`;
+    const description = m['worldcup.matches.description']({}, { locale });
+    return {
+      meta: buildSeoMeta({
+        title,
+        description,
+        path: '/matches',
+        keywords: 'World Cup 2026 AI prediction pages, World Cup fixtures, soccer prediction, football prediction',
+      }),
+      links: buildSeoLinks('/matches', locale),
+    };
+  },
   component: MatchesIndexPage,
 });
