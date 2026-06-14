@@ -16,6 +16,9 @@ const SOURCE_URL =
 const SNAPSHOT_KEY = 'worldcup.schedule.snapshot';
 const STATUS_KEY = 'worldcup.schedule.status';
 const MIN_FIXTURE_COUNT = 80;
+const SEEDS_CACHE_TTL_MS = 5 * 60 * 1000;
+const MATCHES_CACHE_TTL_MS = 5 * 60 * 1000;
+const STATUS_CACHE_TTL_MS = 60 * 1000;
 
 export interface WorldCupSyncStatus {
   ok: boolean;
@@ -40,6 +43,35 @@ type SourceMatch = {
     ht?: [number, number];
   };
 };
+
+let seedsCache:
+  | {
+      expiresAt: number;
+      value: WorldCupMatchSeed[];
+    }
+  | null = null;
+let matchesCache:
+  | {
+      expiresAt: number;
+      value: WorldCupMatch[];
+    }
+  | null = null;
+let statusCache:
+  | {
+      expiresAt: number;
+      value: WorldCupSyncStatus;
+    }
+  | null = null;
+
+function isCacheValid(cache: { expiresAt: number } | null): boolean {
+  return !!cache && cache.expiresAt > Date.now();
+}
+
+function clearWorldCupRuntimeCache(): void {
+  seedsCache = null;
+  matchesCache = null;
+  statusCache = null;
+}
 
 function normalizeSourceMatch(match: SourceMatch, index: number): WorldCupMatchSeed | null {
   if (!match?.date || !match?.time || !match?.team1 || !match?.team2 || !match?.round) {
@@ -149,6 +181,15 @@ export async function runWorldCupSync(reason = 'manual'): Promise<WorldCupSyncSt
         reason,
       })
     );
+    clearWorldCupRuntimeCache();
+    seedsCache = {
+      expiresAt: Date.now() + SEEDS_CACHE_TTL_MS,
+      value: matches,
+    };
+    statusCache = {
+      expiresAt: Date.now() + STATUS_CACHE_TTL_MS,
+      value: status,
+    };
 
     return status;
   } catch (error: any) {
@@ -160,37 +201,79 @@ export async function runWorldCupSync(reason = 'manual'): Promise<WorldCupSyncSt
       error: error?.message || 'World Cup sync failed.',
     };
     await writeConfigValue(STATUS_KEY, JSON.stringify(status)).catch(() => {});
+    statusCache = {
+      expiresAt: Date.now() + STATUS_CACHE_TTL_MS,
+      value: status,
+    };
     return status;
   }
 }
 
 export async function getWorldCupSyncStatus(): Promise<WorldCupSyncStatus> {
+  if (isCacheValid(statusCache)) {
+    return statusCache.value;
+  }
+
   try {
     const raw = await readConfigValue(STATUS_KEY);
     if (!raw) {
-      return {
+      const status = {
         ok: true,
         sourceUrl: SOURCE_URL,
         matchCount: worldCupMatches.length,
       };
+      statusCache = {
+        expiresAt: Date.now() + STATUS_CACHE_TTL_MS,
+        value: status,
+      };
+      return status;
     }
 
-    return JSON.parse(raw) as WorldCupSyncStatus;
+    const status = JSON.parse(raw) as WorldCupSyncStatus;
+    statusCache = {
+      expiresAt: Date.now() + STATUS_CACHE_TTL_MS,
+      value: status,
+    };
+    return status;
   } catch {
-    return {
+    const status = {
       ok: true,
       sourceUrl: SOURCE_URL,
       matchCount: worldCupMatches.length,
     };
+    statusCache = {
+      expiresAt: Date.now() + STATUS_CACHE_TTL_MS,
+      value: status,
+    };
+    return status;
   }
 }
 
 export async function getSyncedWorldCupMatchSeeds(): Promise<WorldCupMatchSeed[]> {
-  return (await loadSyncedSeeds()) ?? worldCupMatches;
+  if (isCacheValid(seedsCache)) {
+    return seedsCache.value;
+  }
+
+  const value = (await loadSyncedSeeds()) ?? worldCupMatches;
+  seedsCache = {
+    expiresAt: Date.now() + SEEDS_CACHE_TTL_MS,
+    value,
+  };
+  matchesCache = null;
+  return value;
 }
 
 export async function getSyncedWorldCupMatches(): Promise<WorldCupMatch[]> {
-  return buildWorldCupMatches(await getSyncedWorldCupMatchSeeds());
+  if (isCacheValid(matchesCache)) {
+    return matchesCache.value;
+  }
+
+  const value = buildWorldCupMatches(await getSyncedWorldCupMatchSeeds());
+  matchesCache = {
+    expiresAt: Date.now() + MATCHES_CACHE_TTL_MS,
+    value,
+  };
+  return value;
 }
 
 export async function getSyncedFeaturedMatches(limit = 8): Promise<WorldCupMatch[]> {

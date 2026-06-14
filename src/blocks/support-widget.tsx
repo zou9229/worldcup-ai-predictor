@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ImageUploader } from '@/components/image-uploader';
-import { MarkdownContent } from '@/components/markdown-content';
+import { AiMarkdown } from '@/components/ai-markdown';
 import { useSession } from '@/core/auth/client';
 import { Link } from '@/core/i18n/navigation';
 import { apiPost } from '@/lib/api-client';
@@ -203,9 +203,9 @@ export function SupportWidget() {
                         )}
                       >
                         {message.role === 'assistant' ? (
-                          <MarkdownContent
+                          <AiMarkdown
                             content={message.content}
-                            className="text-sm leading-relaxed [&>*:first-child]:mt-0 [&_p]:mt-1.5 [&_ul]:ml-4 [&_ol]:ml-4"
+                            className="[&>*:first-child]:mt-0 [&_p]:my-1.5"
                           />
                         ) : (
                           message.content

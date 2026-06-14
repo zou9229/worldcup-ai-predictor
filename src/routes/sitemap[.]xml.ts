@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import { envConfigs } from '@/config';
-import { getLocalPosts, mergePosts } from '@/content/posts';
+import { getLocalPosts } from '@/content/posts';
 import { getWorldCupMatches } from '@/lib/worldcup';
-import { baseLocale, locales, localizeUrl } from '@/paraglide/runtime.js';
+import { baseLocale, locales } from '@/paraglide/runtime.js';
 
 const STATIC_PATHS = [
   '',
@@ -15,6 +15,19 @@ const STATIC_PATHS = [
   '/terms-of-service',
 ];
 
+const LOCALE_PREFIXES: Record<string, string> = {
+  en: '',
+  zh: '/zh',
+  es: '/es',
+  'pt-BR': '/pt-br',
+  fr: '/fr',
+  de: '/de',
+  it: '/it',
+  ja: '/ja',
+  ko: '/ko',
+  ar: '/ar',
+};
+
 type Entry = {
   path: string;
   lastModified?: string;
@@ -22,10 +35,23 @@ type Entry = {
   priority: number;
 };
 
+function escapeXml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
 function urlFor(path: string, locale: string): string {
-  return localizeUrl(`${envConfigs.app_url}${path || '/'}`, {
-    locale: locale as (typeof locales)[number],
-  }).href;
+  const origin = envConfigs.app_url.replace(/\/+$/, '');
+  const normalizedPath = path || '/';
+  const prefix = LOCALE_PREFIXES[locale] ?? '';
+  const localizedPath =
+    prefix && normalizedPath !== '/' ? `${prefix}${normalizedPath}` : prefix || normalizedPath;
+
+  return escapeXml(`${origin}${localizedPath}`);
 }
 
 function entryXml(e: Entry): string {
@@ -36,12 +62,13 @@ function entryXml(e: Entry): string {
     )
     .join('\n');
   const defaultAlternate = `    <xhtml:link rel="alternate" hreflang="x-default" href="${urlFor(e.path, baseLocale)}"/>`;
+
   return [
     '  <url>',
     `    <loc>${urlFor(e.path, baseLocale)}</loc>`,
     alternates,
     defaultAlternate,
-    e.lastModified ? `    <lastmod>${e.lastModified}</lastmod>` : null,
+    e.lastModified ? `    <lastmod>${escapeXml(e.lastModified)}</lastmod>` : null,
     `    <changefreq>${e.changeFrequency}</changefreq>`,
     `    <priority>${e.priority}</priority>`,
     '  </url>',
@@ -50,87 +77,79 @@ function entryXml(e: Entry): string {
     .join('\n');
 }
 
+async function cachedResponse(
+  request: Request,
+  render: () => Promise<Response> | Response
+): Promise<Response> {
+  if (typeof caches === 'undefined') {
+    return render();
+  }
+
+  const cache = caches.default;
+  const cached = await cache.match(request);
+  if (cached) return cached;
+
+  const response = await render();
+  if (response.ok) {
+    await cache.put(request, response.clone());
+  }
+  return response;
+}
+
+function renderSitemap(): Response {
+  const entries: Entry[] = STATIC_PATHS.map((path) => ({
+    path,
+    changeFrequency: 'weekly',
+    priority: path === '' ? 1 : 0.8,
+  }));
+
+  // Keep sitemap generation cheap for crawlers. Live sync data is used by
+  // pages; the sitemap only needs the stable URL inventory.
+  for (const match of getWorldCupMatches()) {
+    entries.push({
+      path: `/matches/${match.slug}`,
+      lastModified: match.date,
+      changeFrequency: match.score?.ft ? 'monthly' : 'daily',
+      priority: match.group ? 0.9 : 0.75,
+    });
+    entries.push({
+      path: `/watch/${match.watchSlug}`,
+      lastModified: match.date,
+      changeFrequency: match.score?.ft ? 'monthly' : 'daily',
+      priority: match.group ? 0.85 : 0.7,
+    });
+  }
+
+  for (const post of getLocalPosts(baseLocale)) {
+    entries.push({
+      path: `/blog/${post.slug}`,
+      lastModified: post.createdAt,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    });
+  }
+
+  const xml = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+    ...entries.map(entryXml),
+    '</urlset>',
+    '',
+  ].join('\n');
+
+  return new Response(xml, {
+    headers: {
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600, s-maxage=21600',
+    },
+  });
+}
+
 export const Route = createFileRoute('/sitemap.xml')({
   server: {
     handlers: {
-      GET: async () => {
-        const entries: Entry[] = STATIC_PATHS.map((path) => ({
-          path,
-          changeFrequency: 'weekly',
-          priority: path === '' ? 1 : 0.8,
-        }));
-
-        let matches = getWorldCupMatches();
-        try {
-          const { getSyncedWorldCupMatches } = await import(
-            '@/modules/worldcup-sync/service'
-          );
-          matches = await getSyncedWorldCupMatches();
-        } catch {
-          // Static fixture snapshot remains the sitemap fallback.
-        }
-
-        for (const match of matches) {
-          entries.push({
-            path: `/matches/${match.slug}`,
-            lastModified: match.date,
-            changeFrequency: match.score?.ft ? 'monthly' : 'daily',
-            priority: match.group ? 0.9 : 0.75,
-          });
-          entries.push({
-            path: `/watch/${match.watchSlug}`,
-            lastModified: match.date,
-            changeFrequency: match.score?.ft ? 'monthly' : 'daily',
-            priority: match.group ? 0.85 : 0.7,
-          });
-        }
-
-        // Blog posts: db posts merged with local MDX posts.
-        try {
-          const { listPublishedArticles } = await import(
-            '@/modules/posts/service'
-          );
-          const rows = await listPublishedArticles().catch(() => []);
-          const dbPosts = rows.map((row) => ({
-            slug: row.slug,
-            title: row.title || row.slug,
-            description: row.description || '',
-            createdAt: new Date(row.createdAt).toISOString(),
-            source: 'db' as const,
-          }));
-          const posts = mergePosts(dbPosts, getLocalPosts(baseLocale));
-          for (const post of posts) {
-            entries.push({
-              path: `/blog/${post.slug}`,
-              lastModified: post.createdAt,
-              changeFrequency: 'monthly',
-              priority: 0.6,
-            });
-          }
-        } catch {
-          // Database unreachable — static paths + local posts still listed.
-          for (const post of getLocalPosts(baseLocale)) {
-            entries.push({
-              path: `/blog/${post.slug}`,
-              lastModified: post.createdAt,
-              changeFrequency: 'monthly',
-              priority: 0.6,
-            });
-          }
-        }
-
-        const xml = [
-          '<?xml version="1.0" encoding="UTF-8"?>',
-          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
-          ...entries.map(entryXml),
-          '</urlset>',
-          '',
-        ].join('\n');
-
-        return new Response(xml, {
-          headers: { 'Content-Type': 'application/xml' },
-        });
-      },
+      GET: async ({ request }: { request: Request }) =>
+        cachedResponse(request, () => renderSitemap()),
     },
   },
 });
