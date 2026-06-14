@@ -297,9 +297,54 @@ export function getMatchByWatchSlug(slug: string) {
   );
 }
 
+export function getMatchKickoffDate(match: Pick<WorldCupMatchSeed, 'date' | 'time'>) {
+  const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(match.date);
+  const timeMatch = /^(\d{1,2}):(\d{2})\s+UTC([+-]\d{1,2})$/.exec(match.time);
+  if (!dateMatch || !timeMatch) return null;
+
+  const [, year, month, day] = dateMatch;
+  const [, hour, minute, offset] = timeMatch;
+  const offsetHours = Number(offset);
+  const utcHour = Number(hour) - offsetHours;
+
+  return new Date(
+    Date.UTC(
+      Number(year),
+      Number(month) - 1,
+      Number(day),
+      utcHour,
+      Number(minute),
+      0
+    )
+  );
+}
+
+export function isFeaturedMatchCandidate(
+  match: Pick<WorldCupMatchSeed, 'date' | 'time' | 'score'>,
+  now = new Date()
+) {
+  if (match.score?.ft) return false;
+
+  const kickoff = getMatchKickoffDate(match);
+  if (!kickoff) return true;
+
+  return kickoff.getTime() > now.getTime();
+}
+
+export function compareMatchesByKickoff(
+  a: Pick<WorldCupMatchSeed, 'date' | 'time' | 'id'>,
+  b: Pick<WorldCupMatchSeed, 'date' | 'time' | 'id'>
+) {
+  const kickoffA = getMatchKickoffDate(a)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+  const kickoffB = getMatchKickoffDate(b)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+  if (kickoffA !== kickoffB) return kickoffA - kickoffB;
+  return a.id.localeCompare(b.id);
+}
+
 export function getFeaturedMatches(limit = 8) {
   return getWorldCupMatches()
-    .filter((match) => !match.score?.ft)
+    .filter((match) => isFeaturedMatchCandidate(match))
+    .sort(compareMatchesByKickoff)
     .slice(0, limit);
 }
 
@@ -394,7 +439,10 @@ export function buildWorldCupAssistantPrompt({
   history: WorldCupAssistantTurn[];
   matches?: WorldCupMatch[];
 }) {
-  const featured = matches.filter((match) => !match.score?.ft).slice(0, 10);
+  const featured = matches
+    .filter((match) => isFeaturedMatchCandidate(match))
+    .sort(compareMatchesByKickoff)
+    .slice(0, 10);
   const fixtureLines = featured.map((match) => {
     const prediction = match.prediction;
     return `- ${match.teamA} vs ${match.teamB}, ${match.date} ${match.time}, ${match.round}${match.group ? ` ${match.group}` : ''}, baseline ${match.teamA} ${prediction.homeWin}% / draw ${prediction.draw}% / ${match.teamB} ${prediction.awayWin}%, score ${prediction.predictedScore}`;

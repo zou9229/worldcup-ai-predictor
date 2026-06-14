@@ -57,7 +57,7 @@ for (const file of readdirSync(messagesDir).filter((name) => name.endsWith('.jso
     if (data[key] === value) {
       failures.push(`${locale}: ${key}`);
     }
-    if (typeof data[key] === 'string' && /\?{3,}|rogrammatic match pages.*rogrammatic match pages/i.test(data[key])) {
+    if (typeof data[key] === 'string' && /\?{3,}|__\s+VAR\d+__|rogrammatic match pages.*rogrammatic match pages/i.test(data[key])) {
       failures.push(`${locale}: ${key} contains corrupted copy`);
     }
   }
@@ -70,7 +70,7 @@ for (const file of readdirSync(messagesDir).filter((name) => name.endsWith('.jso
       failures.push(`${locale}: ${key} still matches English copy`);
     }
 
-    if (/\?{3,}|[\p{L}]\?[\p{L}]|\?[\p{L}]/u.test(value)) {
+    if (/\?{3,}|__\s+VAR\d+__|[\p{L}]\?[\p{L}]|\?[\p{L}]/u.test(value)) {
       failures.push(`${locale}: ${key} contains question-mark corruption`);
     }
   }

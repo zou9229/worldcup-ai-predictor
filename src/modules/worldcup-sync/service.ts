@@ -3,7 +3,13 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/core/db';
 import { config } from '@/config/db/schema';
 import { worldCupMatches, type WorldCupMatchSeed } from '@/data/worldcup-matches';
-import { buildWorldCupMatches, getLegacyWatchSlug, type WorldCupMatch } from '@/lib/worldcup';
+import {
+  buildWorldCupMatches,
+  compareMatchesByKickoff,
+  getLegacyWatchSlug,
+  isFeaturedMatchCandidate,
+  type WorldCupMatch,
+} from '@/lib/worldcup';
 
 const SOURCE_URL =
   'https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json';
@@ -189,7 +195,8 @@ export async function getSyncedWorldCupMatches(): Promise<WorldCupMatch[]> {
 
 export async function getSyncedFeaturedMatches(limit = 8): Promise<WorldCupMatch[]> {
   return (await getSyncedWorldCupMatches())
-    .filter((match) => !match.score?.ft)
+    .filter((match) => isFeaturedMatchCandidate(match))
+    .sort(compareMatchesByKickoff)
     .slice(0, limit);
 }
 

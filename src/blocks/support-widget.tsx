@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ImageUploader } from '@/components/image-uploader';
+import { MarkdownContent } from '@/components/markdown-content';
 import { useSession } from '@/core/auth/client';
 import { Link } from '@/core/i18n/navigation';
 import { apiPost } from '@/lib/api-client';
@@ -195,13 +196,20 @@ export function SupportWidget() {
                       <div
                         key={`${message.role}-${index}`}
                         className={cn(
-                          'max-w-[88%] whitespace-pre-wrap rounded-lg px-3 py-2 text-sm leading-relaxed',
+                          'max-w-[88%] rounded-lg px-3 py-2 text-sm leading-relaxed',
                           message.role === 'user'
-                            ? 'ml-auto bg-zinc-950 text-white'
+                            ? 'ml-auto whitespace-pre-wrap bg-zinc-950 text-white'
                             : 'bg-background text-foreground shadow-sm'
                         )}
                       >
-                        {message.content}
+                        {message.role === 'assistant' ? (
+                          <MarkdownContent
+                            content={message.content}
+                            className="text-sm leading-relaxed [&>*:first-child]:mt-0 [&_p]:mt-1.5 [&_ul]:ml-4 [&_ol]:ml-4"
+                          />
+                        ) : (
+                          message.content
+                        )}
                       </div>
                     ))}
                     {chatLoading ? (

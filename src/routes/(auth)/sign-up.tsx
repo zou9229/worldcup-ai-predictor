@@ -74,7 +74,7 @@ function SignUpPage() {
 
   const afterLoginUrl = redirectParam
     ? `/auth-callback?redirect=${encodeURIComponent(redirectParam)}`
-    : safeCallbackUrl || "/settings";
+    : safeCallbackUrl || "/";
 
   // Carry callbackUrl/redirect across to sign-in so the destination survives the switch.
   const switchQuery = (() => {

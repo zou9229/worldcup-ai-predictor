@@ -6,6 +6,7 @@ import { useSession } from '@/core/auth/client';
 import { useRouter } from '@/core/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { MarkdownContent } from '@/components/markdown-content';
 import { Textarea } from '@/components/ui/textarea';
 import { apiPost } from '@/lib/api-client';
 import { m } from '@/paraglide/messages.js';
@@ -88,9 +89,10 @@ export function SimulationForm({
           </span>
         </div>
         {result && (
-          <div className="rounded-md border bg-background p-4 text-sm leading-7 whitespace-pre-wrap">
-            {result}
-          </div>
+          <MarkdownContent
+            content={result}
+            className="rounded-md border bg-background p-4 text-sm leading-7 [&>*:first-child]:mt-0"
+          />
         )}
       </CardContent>
     </Card>

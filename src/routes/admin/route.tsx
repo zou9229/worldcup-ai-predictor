@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { m } from "@/paraglide/messages.js";
-import { LayoutDashboard, Shield, CreditCard, FolderOpen, Settings, Home, LifeBuoy } from "lucide-react";
+import { LayoutDashboard, Shield, CreditCard, FolderOpen, Settings, Home, LifeBuoy, DatabaseZap } from "lucide-react";
 
 import { AppLayout } from "@/components/app-layout";
 import { envConfigs } from "@/config";
@@ -48,6 +48,7 @@ function AdminLayout() {
       ],
     },
     { href: "/admin/tickets", label: m["admin.nav.tickets"](), icon: LifeBuoy, group },
+    { href: "/admin/worldcup-sync", label: m["admin.nav.data_sync"](), icon: DatabaseZap, group },
   ];
 
   const footerNavItems = [
