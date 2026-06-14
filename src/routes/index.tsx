@@ -11,7 +11,6 @@ import { Footer } from "@/blocks/footer";
 import { envConfigs } from "@/config";
 import { buildSeoLinks, buildSeoMeta, localizedUrl } from "@/lib/seo";
 import { getWorldCupHomeFn } from "@/lib/worldcup-server";
-import { m } from "@/paraglide/messages.js";
 import { getLocale } from "@/paraglide/runtime.js";
 
 /**
@@ -46,14 +45,16 @@ export const Route = createFileRoute('/')({
   },
   head: ({ loaderData }) => {
     const locale = loaderData?.locale ?? 'en';
-    const title = envConfigs.app_name;
-    const description = m['landing.hero.subheadline']({}, { locale: locale as any });
+    const title = `World Cup 2026 AI Predictions | ${envConfigs.app_name}`;
+    const description =
+      'Get World Cup 2026 AI predictions, score forecasts, win probabilities, match analysis, and official watch guides for every fixture on WorldCupAI Predictor.';
     return {
       meta: buildSeoMeta({
         title,
         description,
         path: localizedUrl('/', locale),
-        keywords: 'World Cup 2026 AI prediction, World Cup score predictor, World Cup match predictions, AI football prediction',
+        keywords:
+          'WorldCupAI Predictor, World Cup 2026 AI predictions, World Cup score predictor, match predictions',
       }),
       links: buildSeoLinks('/', locale),
     };
