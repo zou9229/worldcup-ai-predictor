@@ -77,6 +77,14 @@ function entryXml(e: Entry): string {
     .join('\n');
 }
 
+const SITEMAP_CACHE_VERSION = 'sitemap-xml-v2';
+
+function cacheRequestFor(request: Request): Request {
+  const url = new URL(request.url);
+  url.searchParams.set('__cache', SITEMAP_CACHE_VERSION);
+  return new Request(url.toString(), request);
+}
+
 async function cachedResponse(
   request: Request,
   render: () => Promise<Response> | Response
@@ -86,12 +94,13 @@ async function cachedResponse(
   }
 
   const cache = caches.default;
-  const cached = await cache.match(request);
+  const cacheRequest = cacheRequestFor(request);
+  const cached = await cache.match(cacheRequest);
   if (cached) return cached;
 
   const response = await render();
   if (response.ok) {
-    await cache.put(request, response.clone());
+    await cache.put(cacheRequest, response.clone());
   }
   return response;
 }
@@ -140,7 +149,7 @@ function renderSitemap(): Response {
   return new Response(xml, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600, s-maxage=21600',
+      'Cache-Control': 'public, max-age=600',
     },
   });
 }

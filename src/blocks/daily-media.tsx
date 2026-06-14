@@ -12,12 +12,22 @@ type MediaSlide =
       note: string;
       source: string;
       alt: string;
+      href?: string;
     }
   | {
       id: string;
       kind: 'video';
       src: string;
       poster: string;
+      label: string;
+      note: string;
+      source: string;
+    }
+  | {
+      id: string;
+      kind: 'youtube';
+      embedUrl: string;
+      href: string;
       label: string;
       note: string;
       source: string;
@@ -42,17 +52,18 @@ export function DailyMedia() {
       src: '/worldcup/media/daily-hero.jpg',
       label: m['worldcup.media.image_label'](),
       note: m['worldcup.media.image_note'](),
-      source: m['worldcup.media.source_owned'](),
+      source: 'CC0 / Wikimedia Commons',
       alt: m['worldcup.media.image_alt'](),
+      href: 'https://commons.wikimedia.org/wiki/File:Well_lit_soccer_stadium_(Unsplash).jpg',
     },
     {
-      id: 'daily-video',
-      kind: 'video',
-      src: '/worldcup/media/daily-highlight.mp4',
-      poster: '/worldcup/media/daily-highlight-poster.jpg',
+      id: 'official-youtube',
+      kind: 'youtube',
+      embedUrl: 'https://www.youtube-nocookie.com/embed/68Ov7NZNzfc?rel=0&modestbranding=1',
+      href: 'https://www.youtube.com/watch?v=68Ov7NZNzfc',
       label: m['worldcup.media.video_label'](),
       note: m['worldcup.media.video_note'](),
-      source: m['worldcup.media.source_owned'](),
+      source: m['worldcup.media.source_official'](),
     },
     {
       id: 'tactical-visual',
@@ -131,7 +142,7 @@ export function DailyMedia() {
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/84 to-transparent p-5 text-white">
               <p className="text-base font-semibold">{activeSlide.label}</p>
               <p className="mt-1 max-w-2xl text-xs leading-5 text-white/70">{activeSlide.note}</p>
-              {activeSlide.href ? (
+              {'href' in activeSlide && activeSlide.href ? (
                 <a
                   href={activeSlide.href}
                   target="_blank"
@@ -223,6 +234,26 @@ function MediaFrame({
             )}
           />
         ) : null}
+        {!ready ? <MediaFallback icon="play" /> : null}
+      </>
+    );
+  }
+
+  if (slide.kind === 'youtube') {
+    return (
+      <>
+        <iframe
+          src={slide.embedUrl}
+          title={slide.label}
+          loading="lazy"
+          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          onLoad={onReady}
+          className={cn(
+            'absolute inset-0 h-full w-full transition-opacity duration-500',
+            ready ? 'opacity-100' : 'opacity-0'
+          )}
+        />
         {!ready ? <MediaFallback icon="play" /> : null}
       </>
     );
