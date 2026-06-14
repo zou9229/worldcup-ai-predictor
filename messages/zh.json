@@ -763,7 +763,7 @@
   "landing.faq.license.answer": "不是。预测仅用于足球分析和娱乐，不应被视为投注、金融或保证赛果建议。",
   "landing.cta.headline": "找到下一场世界杯预测。",
   "landing.cta.subheadline": "打开比赛页，对比概率，查看官方观赛信息，并在需要时运行自定义 AI 场景。",
-  "landing.cta.button": "Open all matches",
+  "landing.cta.button": "查看全部比赛",
   "landing.footer.tagline": "世界杯 2026 AI 预测与比赛日观赛指南。",
   "landing.footer.feature": "功能",
   "landing.footer.product": "产品",
@@ -905,5 +905,13 @@
   "worldcup.picks.card_badge": "原创 AI 球迷卡",
   "worldcup.picks.reward_text": "已奖励 +{credits} credits。",
   "worldcup.picks.no_reward": "这次没有奖励，下一场继续。",
-  "worldcup.picks.pending": "等待完场比分后结算。"
+  "worldcup.picks.pending": "等待完场比分后结算。",
+  "worldcup.match.description_final": "回顾 {teamA} vs {teamB} 的 2026 世界杯比赛，包括已记录的全场比分、模型概率视图、战术备注和官方观看指引。",
+  "worldcup.match.description_upcoming": "查看 2026 世界杯 {teamA} vs {teamB} 的 AI 预测，包括胜率、预测比分、战术备注和官方观看指引。",
+  "worldcup.match.analysis_even": "模型认为这是一场差距很小的比赛，定位球和首粒进球时间比纸面实力更关键。",
+  "worldcup.match.analysis_edge": "{team} 的基础面更强，但杯赛波动仍会给弱势方机会。",
+  "worldcup.match.key_battle": "关键区域大概率在前 25 分钟：如果 {teamA} 能早早控制场面，比赛会更低混乱；如果 {teamB} 能突破压迫，反击会成为转折点。",
+  "worldcup.match.total_goals_over": "偏向大于 2.5 球",
+  "worldcup.match.total_goals_under": "偏向小于 3.5 球",
+  "worldcup.simulator.example": "如果 {team} 的头号射手只能出场 30 分钟会怎样？"
 }

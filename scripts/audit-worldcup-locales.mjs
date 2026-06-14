@@ -3,6 +3,10 @@ import { join } from 'node:path';
 
 const messagesDir = join(process.cwd(), 'messages');
 const base = JSON.parse(readFileSync(join(messagesDir, 'en.json'), 'utf8'));
+const publicKeyPattern = /^(landing|worldcup)\./;
+const allowSameAsEnglish = new Set([
+  'landing.footer.github',
+]);
 const criticalKeys = [
   'landing.hero.headline',
   'landing.hero.subheadline',
@@ -15,8 +19,13 @@ const criticalKeys = [
   'worldcup.watch.official_title',
   'worldcup.watch.official_body',
   'worldcup.match.disclaimer',
+  'worldcup.match.description_upcoming',
+  'worldcup.match.analysis_even',
+  'worldcup.match.key_battle',
+  'worldcup.match.total_goals_under',
   'worldcup.match.final_score',
   'worldcup.match.model_estimate_note',
+  'worldcup.simulator.example',
   'worldcup.data.source_title',
   'worldcup.data.source_note',
   'worldcup.data.prediction_note',
@@ -24,6 +33,9 @@ const criticalKeys = [
   'worldcup.assistant.description',
   'worldcup.assistant.sign_in_notice',
   'worldcup.assistant.credit_note',
+  'worldcup.hero.fixtures_loaded',
+  'worldcup.hero.today_fixtures',
+  'worldcup.hero.match_room',
   'worldcup.media.title',
   'worldcup.media.description',
   'worldcup.media.tactical_label',
@@ -47,6 +59,19 @@ for (const file of readdirSync(messagesDir).filter((name) => name.endsWith('.jso
     }
     if (typeof data[key] === 'string' && /\?{3,}|rogrammatic match pages.*rogrammatic match pages/i.test(data[key])) {
       failures.push(`${locale}: ${key} contains corrupted copy`);
+    }
+  }
+
+  for (const [key, value] of Object.entries(data)) {
+    if (!publicKeyPattern.test(key) || allowSameAsEnglish.has(key)) continue;
+    if (typeof value !== 'string') continue;
+
+    if (value === base[key] && /[A-Za-z]{3}/.test(value)) {
+      failures.push(`${locale}: ${key} still matches English copy`);
+    }
+
+    if (/\?{3,}|[\p{L}]\?[\p{L}]|\?[\p{L}]/u.test(value)) {
+      failures.push(`${locale}: ${key} contains question-mark corruption`);
     }
   }
 }

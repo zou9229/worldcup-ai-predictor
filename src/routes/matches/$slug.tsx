@@ -47,10 +47,10 @@ function MatchPage() {
                 </CardHeader>
                 <CardContent className="space-y-4 text-sm leading-7 text-emerald-950/66">
                   <p>
-                    {match.prediction.angle}
+                    {getLocalizedAnalysisAngle(match)}
                   </p>
                   <p>
-                    {match.prediction.keyBattle}
+                    {getLocalizedKeyBattle(match)}
                   </p>
                   <p>
                     {finalScore ? (
@@ -59,7 +59,7 @@ function MatchPage() {
                       </>
                     ) : (
                       <>
-                        {m['worldcup.match.predicted_score_prefix']()} <strong className="text-emerald-950">{match.prediction.predictedScore}</strong>. {m['worldcup.match.total_goals_prefix']()} <strong className="text-emerald-950">{match.prediction.totalGoalsLean}</strong>.
+                        {m['worldcup.match.predicted_score_prefix']()} <strong className="text-emerald-950">{match.prediction.predictedScore}</strong>. {m['worldcup.match.total_goals_prefix']()} <strong className="text-emerald-950">{getLocalizedTotalGoalsLean(match)}</strong>.
                       </>
                     )}
                   </p>
@@ -70,7 +70,7 @@ function MatchPage() {
 
               <SimulationForm
                 matchSlug={match.slug}
-                example={`What if ${match.teamA}'s top scorer is limited to 30 minutes?`}
+                example={m['worldcup.simulator.example']({ team: match.teamA })}
               />
 
               <Card className="rounded-lg border-emerald-950/10 bg-white/75 shadow-sm">
@@ -185,7 +185,7 @@ function MatchHero({ match }: { match: WorldCupMatch }) {
               </span>
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-white/70">
-              {getMatchDescription(match)}
+              {getLocalizedMatchDescription(match)}
             </p>
           </div>
           <Card className="rounded-lg border-white/15 bg-black/30 text-white shadow-xl backdrop-blur-md">
@@ -244,6 +244,45 @@ function AffiliateCard({ match }: { match: WorldCupMatch }) {
       </CardContent>
     </Card>
   );
+}
+
+function getLocalizedMatchDescription(match: WorldCupMatch) {
+  if (match.score?.ft) {
+    return m['worldcup.match.description_final']({
+      teamA: match.teamA,
+      teamB: match.teamB,
+    });
+  }
+  return m['worldcup.match.description_upcoming']({
+    teamA: match.teamA,
+    teamB: match.teamB,
+  });
+}
+
+function getLocalizedAnalysisAngle(match: WorldCupMatch) {
+  if (match.prediction.confidence === 'Low') {
+    return m['worldcup.match.analysis_even']();
+  }
+
+  const strongerTeam =
+    match.prediction.homeWin >= match.prediction.awayWin ? match.teamA : match.teamB;
+  return m['worldcup.match.analysis_edge']({ team: strongerTeam });
+}
+
+function getLocalizedKeyBattle(match: WorldCupMatch) {
+  return m['worldcup.match.key_battle']({
+    teamA: match.teamA,
+    teamB: match.teamB,
+  });
+}
+
+function getLocalizedTotalGoalsLean(match: WorldCupMatch) {
+  const [home = 0, away = 0] = match.prediction.predictedScore
+    .split('-')
+    .map((value) => Number(value.trim()));
+  return home + away >= 3
+    ? m['worldcup.match.total_goals_over']()
+    : m['worldcup.match.total_goals_under']();
 }
 
 export const Route = createFileRoute('/matches/$slug')({
