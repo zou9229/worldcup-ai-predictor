@@ -57,13 +57,42 @@ export function DailyMedia() {
       href: 'https://commons.wikimedia.org/wiki/File:Well_lit_soccer_stadium_(Unsplash).jpg',
     },
     {
+      id: 'stadium-aerial',
+      kind: 'image',
+      src: '/worldcup/media/stadium-aerial-cc0.jpg',
+      label: m['worldcup.media.tactical_label'](),
+      note: m['worldcup.media.tactical_note'](),
+      source: 'CC0 / Wikimedia Commons',
+      alt: m['worldcup.media.image_alt'](),
+      href: 'https://commons.wikimedia.org/wiki/File:Drone_aerial_view_of_the_soccer_stadium_(Unsplash).jpg',
+    },
+    {
+      id: 'stadium-crowd',
+      kind: 'image',
+      src: '/worldcup/media/stadium-crowd-cc0.jpg',
+      label: m['worldcup.media.image_label'](),
+      note: m['worldcup.media.image_note'](),
+      source: 'CC0 / Wikimedia Commons',
+      alt: m['worldcup.media.image_alt'](),
+      href: 'https://commons.wikimedia.org/wiki/File:Liverpool_football_stadium_(Unsplash).jpg',
+    },
+    {
       id: 'official-youtube',
       kind: 'youtube',
       embedUrl: 'https://www.youtube-nocookie.com/embed/68Ov7NZNzfc?rel=0&modestbranding=1',
       href: 'https://www.youtube.com/watch?v=68Ov7NZNzfc',
       label: m['worldcup.media.video_label'](),
       note: m['worldcup.media.video_note'](),
-      source: m['worldcup.media.source_official'](),
+      source: 'YouTube',
+    },
+    {
+      id: 'youtube-highlight',
+      kind: 'youtube',
+      embedUrl: 'https://www.youtube-nocookie.com/embed/O3botizsrUU?rel=0&modestbranding=1',
+      href: 'https://www.youtube.com/watch?v=O3botizsrUU',
+      label: m['worldcup.media.video_label'](),
+      note: m['worldcup.media.video_note'](),
+      source: 'YouTube',
     },
     {
       id: 'tactical-visual',
@@ -248,6 +277,7 @@ function MediaFrame({
           loading="lazy"
           allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
+          referrerPolicy="strict-origin-when-cross-origin"
           onLoad={onReady}
           className={cn(
             'absolute inset-0 h-full w-full transition-opacity duration-500',

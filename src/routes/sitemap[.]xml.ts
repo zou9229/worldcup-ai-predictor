@@ -150,6 +150,7 @@ function renderSitemap(): Response {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
       'Cache-Control': 'public, max-age=600',
+      'X-Content-Type-Options': 'nosniff',
     },
   });
 }
