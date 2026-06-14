@@ -34,11 +34,13 @@ type MediaSlide =
     }
   | {
       id: string;
-      kind: 'visual' | 'official';
+      kind: 'official';
       label: string;
       note: string;
       source: string;
-      href?: string;
+      href: string;
+      background: string;
+      alt: string;
     };
 
 export function DailyMedia() {
@@ -67,16 +69,6 @@ export function DailyMedia() {
       href: 'https://commons.wikimedia.org/wiki/File:Drone_aerial_view_of_the_soccer_stadium_(Unsplash).jpg',
     },
     {
-      id: 'stadium-crowd',
-      kind: 'image',
-      src: '/worldcup/media/stadium-crowd-cc0.jpg',
-      label: m['worldcup.media.image_label'](),
-      note: m['worldcup.media.image_note'](),
-      source: 'CC0 / Wikimedia Commons',
-      alt: m['worldcup.media.image_alt'](),
-      href: 'https://commons.wikimedia.org/wiki/File:Liverpool_football_stadium_(Unsplash).jpg',
-    },
-    {
       id: 'official-youtube',
       kind: 'youtube',
       embedUrl: 'https://www.youtube-nocookie.com/embed/68Ov7NZNzfc?rel=0&modestbranding=1',
@@ -86,28 +78,14 @@ export function DailyMedia() {
       source: 'YouTube',
     },
     {
-      id: 'youtube-highlight',
-      kind: 'youtube',
-      embedUrl: 'https://www.youtube-nocookie.com/embed/O3botizsrUU?rel=0&modestbranding=1',
-      href: 'https://www.youtube.com/watch?v=O3botizsrUU',
-      label: m['worldcup.media.video_label'](),
-      note: m['worldcup.media.video_note'](),
-      source: 'YouTube',
-    },
-    {
-      id: 'tactical-visual',
-      kind: 'visual',
-      label: m['worldcup.media.tactical_label'](),
-      note: m['worldcup.media.tactical_note'](),
-      source: m['worldcup.media.source_generated'](),
-    },
-    {
       id: 'official-video',
       kind: 'official',
       label: m['worldcup.media.official_label'](),
       note: m['worldcup.media.official_note'](),
       source: m['worldcup.media.source_official'](),
       href: 'https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026',
+      background: '/worldcup/media/stadium-aerial-cc0.jpg',
+      alt: m['worldcup.media.image_alt'](),
     },
   ];
   const activeSlide = slides[activeIndex] ?? slides[0];
@@ -168,24 +146,26 @@ export function DailyMedia() {
               </button>
             </div>
 
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/84 to-transparent p-5 text-white">
-              <p className="text-base font-semibold">{activeSlide.label}</p>
-              <p className="mt-1 max-w-2xl text-xs leading-5 text-white/70">{activeSlide.note}</p>
-              {'href' in activeSlide && activeSlide.href ? (
-                <a
-                  href={activeSlide.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-lime-200 hover:text-lime-100"
-                >
-                  {m['worldcup.media.open_official']()}
-                  <ExternalLink className="size-3.5" />
-                </a>
-              ) : null}
-            </div>
+            {activeSlide.kind !== 'official' ? (
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/84 to-transparent p-5 text-white">
+                <p className="text-base font-semibold">{activeSlide.label}</p>
+                <p className="mt-1 max-w-2xl text-xs leading-5 text-white/70">{activeSlide.note}</p>
+                {'href' in activeSlide && activeSlide.href ? (
+                  <a
+                    href={activeSlide.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-lime-200 hover:text-lime-100"
+                  >
+                    {m['worldcup.media.open_official']()}
+                    <ExternalLink className="size-3.5" />
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
+          <div className="grid max-h-[28rem] grid-cols-2 gap-3 overflow-y-auto pr-1 lg:grid-cols-1 lg:[scrollbar-width:thin]">
             {slides.map((slide, index) => (
               <button
                 key={slide.id}
@@ -289,7 +269,43 @@ function MediaFrame({
     );
   }
 
-  return <MediaFallback icon={slide.kind === 'official' ? 'play' : 'trophy'} />;
+  return (
+    <>
+      <img
+        src={slide.background}
+        alt={slide.alt}
+        onLoad={onReady}
+        onError={onFailed}
+        className={cn(
+          'absolute inset-0 h-full w-full object-cover transition-opacity duration-500',
+          ready ? 'opacity-100' : 'opacity-0'
+        )}
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,8,0.9),rgba(3,10,8,0.5)_55%,rgba(3,10,8,0.88))]" />
+      <div className="absolute inset-0 flex items-center justify-center px-6">
+        <div className="max-w-md rounded-lg border border-white/15 bg-black/42 p-5 text-center text-white shadow-2xl shadow-black/25 backdrop-blur-md">
+          <div className="mx-auto flex size-12 items-center justify-center rounded-full border border-lime-200/30 bg-lime-200/12 text-lime-100">
+            <Trophy className="size-6" />
+          </div>
+          <p className="mt-4 text-xs font-bold uppercase tracking-[0.18em] text-lime-100/70">
+            FIFA.com
+          </p>
+          <p className="mt-2 text-2xl font-black tracking-tight">{slide.label}</p>
+          <p className="mt-3 text-sm leading-6 text-white/68">{slide.note}</p>
+          <a
+            href={slide.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-lime-300 px-5 py-2 text-sm font-bold text-emerald-950 hover:bg-lime-200"
+          >
+            {m['worldcup.media.open_official']()}
+            <ExternalLink className="size-4" />
+          </a>
+        </div>
+      </div>
+      {!ready ? <MediaFallback icon="trophy" /> : null}
+    </>
+  );
 }
 
 function MediaFallback({ icon }: { icon: 'camera' | 'play' | 'trophy' }) {
