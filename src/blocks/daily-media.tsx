@@ -51,7 +51,7 @@ export function DailyMedia() {
     {
       id: 'daily-image',
       kind: 'image',
-      src: '/worldcup/media/daily-hero.jpg',
+      src: '/worldcup/media/daily-hero.webp',
       label: m['worldcup.media.image_label'](),
       note: m['worldcup.media.image_note'](),
       source: 'CC0 / Wikimedia Commons',
@@ -61,7 +61,7 @@ export function DailyMedia() {
     {
       id: 'stadium-aerial',
       kind: 'image',
-      src: '/worldcup/media/stadium-aerial-cc0.jpg',
+      src: '/worldcup/media/stadium-aerial-cc0.webp',
       label: m['worldcup.media.tactical_label'](),
       note: m['worldcup.media.tactical_note'](),
       source: 'CC0 / Wikimedia Commons',
@@ -84,7 +84,7 @@ export function DailyMedia() {
       note: m['worldcup.media.official_note'](),
       source: m['worldcup.media.source_official'](),
       href: 'https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026',
-      background: '/worldcup/media/stadium-aerial-cc0.jpg',
+      background: '/worldcup/media/stadium-aerial-cc0.webp',
       alt: m['worldcup.media.image_alt'](),
     },
   ];
@@ -211,6 +211,10 @@ function MediaFrame({
           <img
             src={slide.src}
             alt={slide.alt}
+            width={1280}
+            height={726}
+            loading="lazy"
+            decoding="async"
             onLoad={onReady}
             onError={onFailed}
             className={cn(
@@ -274,6 +278,10 @@ function MediaFrame({
       <img
         src={slide.background}
         alt={slide.alt}
+        width={1280}
+        height={726}
+        loading="lazy"
+        decoding="async"
         onLoad={onReady}
         onError={onFailed}
         className={cn(

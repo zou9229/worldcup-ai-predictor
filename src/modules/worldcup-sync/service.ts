@@ -18,7 +18,7 @@ const STATUS_KEY = 'worldcup.schedule.status';
 const MIN_FIXTURE_COUNT = 80;
 const SEEDS_CACHE_TTL_MS = 5 * 60 * 1000;
 const MATCHES_CACHE_TTL_MS = 5 * 60 * 1000;
-const STATUS_CACHE_TTL_MS = 60 * 1000;
+const STATUS_CACHE_TTL_MS = 5 * 60 * 1000;
 
 export interface WorldCupSyncStatus {
   ok: boolean;

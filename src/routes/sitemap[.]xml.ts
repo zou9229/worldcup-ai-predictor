@@ -8,6 +8,7 @@ import { baseLocale, locales } from '@/paraglide/runtime.js';
 const STATIC_PATHS = [
   '',
   '/matches',
+  '/groups',
   '/watch',
   '/score-simulator',
   '/pricing',

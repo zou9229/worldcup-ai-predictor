@@ -3,7 +3,6 @@ import { Header } from '@/blocks/header';
 import { Footer } from '@/blocks/footer';
 import { MatchCard } from '@/components/worldcup/match-card';
 import { Badge } from '@/components/ui/badge';
-import { envConfigs } from '@/config';
 import { buildSeoLinks, buildSeoMeta } from '@/lib/seo';
 import { getWorldCupMatchesFn } from '@/lib/worldcup-server';
 import { m } from '@/paraglide/messages.js';
@@ -76,14 +75,14 @@ export const Route = createFileRoute('/matches/')({
   },
   head: () => {
     const locale = getLocale();
-    const title = `${m['worldcup.matches.title']({}, { locale })} | ${envConfigs.app_name}`;
+    const title = m['worldcup.matches.title']({}, { locale });
     const description = m['worldcup.matches.description']({}, { locale });
     return {
       meta: buildSeoMeta({
         title,
         description,
         path: '/matches',
-        keywords: 'World Cup 2026 AI prediction pages, World Cup fixtures, soccer prediction, football prediction',
+        keywords: 'worldcup schedule, World Cup 2026 schedule, worldcup games, World Cup fixtures, AI predictions',
       }),
       links: buildSeoLinks('/matches', locale),
     };

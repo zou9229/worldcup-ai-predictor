@@ -29,6 +29,7 @@ export function Footer() {
       title: m["landing.footer.feature"](),
       links: [
         { label: m["worldcup.nav.matches"](), href: "/matches" },
+        { label: m["worldcup.nav.groups"](), href: "/groups" },
         { label: m["worldcup.nav.simulator"](), href: "/score-simulator" },
         { label: m["landing.footer.settings"](), href: "/settings", external: true},
       ],

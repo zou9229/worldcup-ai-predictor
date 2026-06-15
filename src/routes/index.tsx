@@ -8,7 +8,6 @@ import { Pricing } from "@/blocks/pricing";
 import { FAQ } from "@/blocks/faq";
 import { CTA } from "@/blocks/cta";
 import { Footer } from "@/blocks/footer";
-import { envConfigs } from "@/config";
 import { buildSeoLinks, buildSeoMeta, localizedUrl } from "@/lib/seo";
 import { getWorldCupHomeFn } from "@/lib/worldcup-server";
 import { getLocale } from "@/paraglide/runtime.js";
@@ -45,16 +44,16 @@ export const Route = createFileRoute('/')({
   },
   head: ({ loaderData }) => {
     const locale = loaderData?.locale ?? 'en';
-    const title = `World Cup 2026 AI Predictions | ${envConfigs.app_name}`;
+    const title = 'World Cup 2026 Schedule, Groups & AI Predictions';
     const description =
-      'Get World Cup 2026 AI predictions, score forecasts, win probabilities, match analysis, and official watch guides for every fixture on WorldCupAI Predictor.';
+      'World Cup 2026 schedule, groups, standings, match predictions, and AI score forecasts with official viewing guides for every fixture and group stage match.';
     return {
       meta: buildSeoMeta({
         title,
         description,
         path: localizedUrl('/', locale),
         keywords:
-          'WorldCupAI Predictor, World Cup 2026 AI predictions, World Cup score predictor, match predictions',
+          'worldcup schedule, worldcup groups, worldcup standings, worldcup 2026, World Cup AI predictions',
       }),
       links: buildSeoLinks('/', locale),
     };

@@ -398,7 +398,7 @@ export function getCanonicalUrl(path: string) {
 export function getVpnAffiliateUrl() {
   return (
     envConfigs.vpn_affiliate_url ||
-    'https://nordvpn.com/?utm_source=worldcup-ai-predictor'
+    'https://go.nordvpn.net/aff_c?offer_id=15&aff_id=150474'
   );
 }
 
